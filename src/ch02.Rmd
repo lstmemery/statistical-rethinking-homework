@@ -105,6 +105,13 @@ which—was tossed in the air and produced a “land” observation. Assume that
 likely to be tossed. Show that the posterior probability that the globe was the Earth, conditional on
 seeing “land” (Pr(Earth|land)), is 0.23.
 
+$$Pr(Earth|land) = \frac{Pr(land|Earth)Pr(Earth)}{Pr(land)}=\frac{0.3*0.5}{0.3*0.5+1*0.5}$$
+
+```{r}
+0.3 * 0.5 / (0.3 * 0.5 + 1 * 0.5)
+```
+
+
 **2M4.** Suppose you have a deck with only three cards. Each card has two sides, and each side is either
 black or white. One card has two black sides. The second card has one black and one white side. The
 third card has two white sides. Now suppose all three cards are placed in a bag and shuffled. Someone
