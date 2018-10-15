@@ -55,9 +55,8 @@ prior for p.
 (3) L, W, W, L, W, W, W
 
 ```{r}
-compute_globe_grid_posterior <- function(water, total) {
+compute_globe_grid_posterior <- function(water, total, prior) {
   p_grid <- seq(from = 0 , to = 1, length.out = 20)
-  prior <- rep(1, 20)
   likelihood <- dbinom(water, size = total, prob = p_grid)
   (likelihood * prior) / sum(likelihood * prior)
 }
@@ -68,15 +67,15 @@ plot_globe_posterior <- function(posterior) {
 ```
 
 ```{r}
-plot_globe_posterior(compute_globe_grid_posterior(3, 3))
+plot_globe_posterior(compute_globe_grid_posterior(3, 3, rep(1, 20)))
 ```
 
 ```{r}
-plot_globe_posterior(compute_globe_grid_posterior(3, 4))
+plot_globe_posterior(compute_globe_grid_posterior(3, 4, rep(1, 20)))
 ```
 
 ```{r}
-plot_globe_posterior(compute_globe_grid_posterior(5, 7))
+plot_globe_posterior(compute_globe_grid_posterior(5, 7, rep(1, 20)))
 ```
 
 
@@ -84,6 +83,21 @@ plot_globe_posterior(compute_globe_grid_posterior(5, 7))
 p ≥ 0.5. Again compute and plot the grid approximate posterior distribution for each of the sets of
 observations in the problem just above.
 
+```{r}
+new_prior <- ifelse(seq(from = 0, to = 1, length.out = 20) < 0.5, 0, 1)
+```
+
+```{r}
+plot_globe_posterior(compute_globe_grid_posterior(3, 3, new_prior))
+```
+
+```{r}
+plot_globe_posterior(compute_globe_grid_posterior(3, 4, new_prior))
+```
+
+```{r}
+plot_globe_posterior(compute_globe_grid_posterior(5, 7, new_prior))
+```
 
 **2M3.** Suppose there are two globes, one for Earth and one for Mars. The Earth globe is 70% covered
 in water. The Mars globe is 100% land. Further suppose that one of these globes—you don’t know
