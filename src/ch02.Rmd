@@ -23,13 +23,13 @@ knitr::opts_chunk$set(echo = TRUE)
 
 (1) The probability of rain on Monday.
 (2) The probability of rain, given that is Monday.
-(3) The probability that it is Monday, given that it is raining.
+**(3) The probability that it is Monday, given that it is raining.**
 (4) The probability that it is Monday and that it is raining.
 
 **2E3.** Which of the expressions below correspond to the statement: *the probability that it is Monday,
 given that it is raining*?
 
-(1) Pr(Monday|rain)
+**(1) Pr(Monday|rain)**
 (2) Pr(rain|Monday)
 (3) Pr(rain|Monday) Pr(Monday)
 (4) Pr(rain|Monday) Pr(Monday)/ Pr(rain)
@@ -42,6 +42,9 @@ for describing uncertainty from the perspective of an observer with limited know
 objective reality. Discuss the globe tossing example from the chapter, in light of this statement. What
 does it mean to say “the probability of water is 0.7”?
 
+Throwing a globe is deterministic, but we are ignorant we ignorant of the mechanics of globe tossing.
+If you were to toss a globe randomly many times then about 70% of the time the globe would land on water.
+
 ## Medium.
 
 **2M1.** Recall the globe tossing model from the chapter. Compute and plot the grid approximate
@@ -50,6 +53,32 @@ prior for p.
 (1) W, W, W
 (2) W, W, W, L
 (3) L, W, W, L, W, W, W
+
+```{r}
+compute_globe_grid_posterior <- function(water, total) {
+  p_grid <- seq(from = 0 , to = 1, length.out = 20)
+  prior <- rep(1, 20)
+  likelihood <- dbinom(water, size = total, prob = p_grid)
+  (likelihood * prior) / sum(likelihood * prior)
+}
+
+plot_globe_posterior <- function(posterior) {
+  plot(seq(from = 0 , to = 1, length.out = 20), posterior, type = "b")
+}
+```
+
+```{r}
+plot_globe_posterior(compute_globe_grid_posterior(3, 3))
+```
+
+```{r}
+plot_globe_posterior(compute_globe_grid_posterior(3, 4))
+```
+
+```{r}
+plot_globe_posterior(compute_globe_grid_posterior(5, 7))
+```
+
 
 **2M2.** Now assume a prior for p that is equal to zero when p < 0.5 and is a positive constant when
 p ≥ 0.5. Again compute and plot the grid approximate posterior distribution for each of the sets of
