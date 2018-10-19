@@ -189,9 +189,15 @@ p_joint_twins <- 0.1 ^ 2 * 0.5 + 0.2 ^ 2 * 0.5
 p_joint_twins / p_twins
 ```
 
-
 **2H2.** Recall all the facts from the problem above. Now compute the probability that the panda we
 have is from species A, assuming we have observed only the first birth and that it was twins.
+
+$$p(A|twins) = \frac{p(twins|A)P(A)}{p(twins)}$$
+
+```{r}
+
+```
+
 
 **2H3.** Continuing on from the previous problem, suppose the same panda mother has a second birth
 and that it is not twins, but a singleton infant. Compute the posterior probability that this panda is
