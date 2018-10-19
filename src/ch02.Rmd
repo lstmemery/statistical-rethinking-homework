@@ -207,7 +207,7 @@ p_a_given_twins
 and that it is not twins, but a singleton infant. Compute the posterior probability that this panda is
 species A.
 
-p(A) is currently 0.33
+p(A) is currently 0.33.
 
 $$p(A|single_2) = \frac{p(single_2|A)p(A)}{p(single_2)}$$
 
@@ -230,3 +230,28 @@ tion you have about the test:
 The vet administers the test to your panda and tells you that the test is positive for species A. First
 ignore your previous information from the births and compute the posterior probability that your
 panda is species A. Then redo your calculation, now using the birth data as well.
+
+Without birth data:
+
+$$p(A|test_A) = \frac{p(test_A|A)p(A)}{p(test_A)}$$
+
+```{r}
+p_test_a_given_a <- 0.8
+p_test_b_given_a <- 1 - 0.65
+p_a <- 0.5
+p_test_a <- p_test_a_given_a * p_a + p_test_b_given_a * (1 - p_a)
+
+(p_test_a_given_a * p_a) / p_test_a
+```
+
+With data p(A) is 0.36
+
+```{r}
+p_test_a_given_a <- 0.8
+p_test_b_given_a <- 1 - 0.65
+p_a <- 0.36
+p_test_a <- p_test_a_given_a * p_a + p_test_b_given_a * (1 - p_a)
+
+(p_test_a_given_a * p_a) / p_test_a
+```
+
