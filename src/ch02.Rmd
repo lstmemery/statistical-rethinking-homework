@@ -111,7 +111,6 @@ $$Pr(Earth|land) = \frac{Pr(land|Earth)Pr(Earth)}{Pr(land)}=\frac{0.3*0.5}{0.3*0
 0.3 * 0.5 / (0.3 * 0.5 + 1 * 0.5)
 ```
 
-
 **2M4.** Suppose you have a deck with only three cards. Each card has two sides, and each side is either
 black or white. One card has two black sides. The second card has one black and one white side. The
 third card has two white sides. Now suppose all three cards are placed in a bag and shuffled. Someone
@@ -121,9 +120,23 @@ also black is 2/3. Use the counting method (Section 2 of the chapter) to approac
 means counting up the ways that each card could produce the observed data (a black side facing up
 on the table).
 
+```{r}
+two_black_sides <- 2 * 1 / 3 
+one_black_side <- 1 * 1 / 3
+two_white_sides <- 0 * 1 / 3
+two_black_sides / (two_black_sides + one_black_side + two_white_sides)
+```
+
 **2M5.** Now suppose there are four cards: B/B, B/W, W/W, and another B/B. Again suppose a card is
 drawn from the bag and a black side appears face up. Again calculate the probability that the other
 side is black.
+
+```{r}
+two_black_sides <- 2 * 2 / 4 
+one_black_side <- 1 * 1 / 4
+two_white_sides <- 0 * 1 / 4
+two_black_sides / (two_black_sides + one_black_side + two_white_sides)
+```
 
 **2M6.** Imagine that black ink is heavy, and so cards with black sides are heavier than cards with white
 sides. As a result, it’s less likely that a card with black sides is pulled from the bag. So again assume
@@ -132,12 +145,28 @@ for every way to pull the B/B card from the bag, there are 2 ways to pull the B/
 pull the W/W card. Again suppose that a card is pulled and a black side appears face up. Show that
 the probability the other side is black is now 0.5. Use the counting method, as before.
 
+```{r}
+two_black_sides <- 2 * 1 / 6 
+one_black_side <- 1 * 2 / 6
+two_white_sides <- 0 * 3 / 6
+two_black_sides / (two_black_sides + one_black_side + two_white_sides)
+```
+
 **2M7.** Assume again the original card problem, with a single card showing a black side face up. Before
 looking at the other side, we draw another card from the bag and lay it face up on the table. The face
 that is shown on the new card is white. Show that the probability that the first card, the one showing
 a black side, has black on its other side is now 0.75. Use the counting method, if you can. Hint: Treat
 this like the sequence of globe tosses, counting all the ways to see each observation, for each possible
 first card.
+
+```{r}
+two_side_black_two_side_white <- 4 / 8
+two_side_black_one_side_black <- 2 / 8
+one_side_black_two_side_white <- 2 / 8
+
+(two_side_black_one_side_black + two_side_black_two_side_white) / (two_side_black_one_side_black + two_side_black_two_side_white + one_side_black_two_side_white)
+```
+
 
 ## Hard.
 
@@ -150,6 +179,16 @@ research.
 Now suppose you are managing a captive panda breeding program. You have a new female panda
 of unknown species, and she has just given birth to twins. What is the probability that her next birth
 will also be twins?
+
+$$p(twins_2|twins_1) = \frac{p(twins_2, twins_1)}{p(twins)}$$
+
+```{r}
+p_twins <- 0.1 * 0.5 + 0.2 * 0.5
+p_joint_twins <- 0.1 ^ 2 * 0.5 + 0.2 ^ 2 * 0.5
+
+p_joint_twins / p_twins
+```
+
 
 **2H2.** Recall all the facts from the problem above. Now compute the probability that the panda we
 have is from species A, assuming we have observed only the first birth and that it was twins.
