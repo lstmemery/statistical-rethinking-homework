@@ -71,7 +71,7 @@ sort(samples, decreasing = TRUE)[[length(samples) * 0.2]]
 **3E6.** Which values of p contain the narrowest interval equal to 66% of the posterior probability?
 
 ```{r}
-HPDI(samples = samples,prob = 2/3)
+HPDI(samples = samples, prob = 2/3)
 ```
 
 
@@ -87,12 +87,48 @@ PI(samples = samples, prob = 2/3)
 **3M1.** Suppose the globe tossing data had turned out to be 8 water in 15 tosses. Construct the poste-
 rior distribution, using grid approximation. Use the same flat prior as before.
 
+```{r}
+p_grid <- seq( from = 0 , to = 1 , length.out = 1000 )
+prior <- rep( 1 , 1000 )
+likelihood <- dbinom( 8 , size = 15 , prob = p_grid )
+posterior <- likelihood * prior
+posterior <- posterior / sum(posterior)
+```
+
+```{r}
+ggplot(mapping=aes(x = p_grid, y=posterior)) +
+  geom_line()
+```
+
 **3M2.** Draw 10,000 samples from the grid approximation from above. Then use the samples to cal-
 culate the 90% HPDI for p.
+
+```{r}
+set.seed(100)
+samples <- sample( p_grid , prob = posterior , size = 1e5 , replace = TRUE )
+```
+
+```{r}
+HPDI(samples, prob = 0.9)
+```
 
 **3M3.** Construct a posterior predictive check for this model and data. This means simulate the distri-
 bution of samples, averaging over the posterior uncertainty in p. What is the probability of observing
 8 water in 15 tosses?
+
+```{r}
+ppc <- rbinom(n = 1e5, size = 15, prob = samples)
+```
+
+```{r}
+sum(ppc == 8) / length(ppc)
+```
+
+```{r}
+ggplot(mapping = aes(x = ppc)) +
+  geom_bar()
+```
+
 
 **3M4.** Using the posterior distribution constructed from the new (8/15) data, now calculate the prob-
 ability of observing 6 water in 9 tosses.
@@ -160,18 +196,6 @@ of boys to only those second births that followed girls. To do this correctly, y
 number of first borns who were girls and simulate that many births, 10,000 times. Compare the
 counts of boys in your simulations to the actual observed count of boys following girls. How does the
 model look in this light? Any guesses what is going on in these data?
-
-## Easy Questions
-
-```{r}
-p_grid <- seq(from)
-```
-
-```{r}
-
-```
-
-## Hard Questions
 
 ### Question 1
 
