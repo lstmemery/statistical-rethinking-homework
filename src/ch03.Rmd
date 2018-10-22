@@ -247,6 +247,24 @@ sum(birth1) + sum(birth2)
 being a boy. Assume a uniform prior probability. Which parameter value maximizes the posterior
 probability?
 
+```{r}
+p_grid <- seq( from = 0 , to = 1 , length.out = 1000 )
+prior <- rep( 1 , 1000 )
+likelihood <- dbinom(sum(birth1) + sum(birth2), size = 200 , prob = p_grid )
+posterior <- likelihood * prior
+posterior <- posterior / sum(posterior)
+```
+
+```{r}
+p_grid[which.max(posterior)]
+```
+
+```{r}
+ggplot(mapping = aes(x = p_grid, y = posterior)) +
+  geom_line()
+```
+
+
 **3H2.** Using the sample function, draw 10,000 random parameter values from the posterior distri-
 bution you calculated above. Use these samples to estimate the 50%, 89%, and 97% highest posterior
 density intervals.
