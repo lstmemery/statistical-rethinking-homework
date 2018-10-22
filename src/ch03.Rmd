@@ -309,9 +309,15 @@ The the mode of the data seems to be near 111 births.
 in the first births, birth1 . How does the model look in this light?
 
 ```{r}
-rbinom()
+simulated_first_borns <- rbinom(n = 1e5, size = 100, prob = samples)
 ```
 
+```{r}
+dens(simulated_first_borns)
+abline(v = sum(birth1))
+```
+
+Now the actual value is away from then center of density.
 
 **3H5.** The model assumes that sex of first and second births are independent. To check this assump-
 tion, focus now on second births that followed female first borns. Compare 10,000 simulated counts
@@ -320,68 +326,14 @@ number of first borns who were girls and simulate that many births, 10,000 times
 counts of boys in your simulations to the actual observed count of boys following girls. How does the
 model look in this light? Any guesses what is going on in these data?
 
-### Question 1
-
 ```{r}
-p_grid <- seq(from = 0, to = 1, length.out = 1000)
-prior <- rep(1, 1000)
-likelihood <- dbinom(sum(birth1) + sum(birth2), size = 200, prob = p_grid)
-posterior <- likelihood * prior
-posterior <- posterior * sum(posterior)
+second_after_first_born_daughter <- birth2[birth1 == 0]
+simulated_second_birth <- rbinom(n = 1e5, size = length(second_after_first_born_daughter), prob = samples)
 ```
 
 ```{r}
-max(posterior)
+dens(simulated_second_birth)
+abline(v = sum(second_after_first_born_daughter))
 ```
 
-```{r}
-p_grid[which.max(posterior)]
-```
-
-```{r}
-111/200
-```
-
-
-```{r}
-ggplot(as_tibble(p_grid, posterior), aes(x = p_grid, y =  posterior)) +
-  geom_line()
-```
-
-### Question 2
-
-```{r}
-posterior_samples <- sample(p_grid, 10000, replace = TRUE, prob = posterior)
-```
-
-```{r}
-HPDI(posterior_samples, 0.5)
-```
-
-```{r}
-HPDI(posterior_samples)
-```
-
-```{r}
-HPDI(posterior_samples, 0.97)
-```
-
-### Question 3
-
-```{r}
-simulations <- rbinom(10000, 200, prob = posterior_samples)
-```
-
-```{r}
-dens(simulations)
-```
-
-It looks pretty close, but it is a board distribution
-
-### Question 4
-
-```{r}
-likelihood <- dbinom(sum(birth1), size = 100, prob = p_grid)
-```
-
-
+The assumption of independence cannot hold. The actual value is far to the extreme right of the center of the distribution. If I were to guess, I would imagine a systematic bias where the parents in this cohort decided to stop having children if the first child was a boy.
