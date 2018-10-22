@@ -129,9 +129,18 @@ ggplot(mapping = aes(x = ppc)) +
   geom_bar()
 ```
 
-
 **3M4.** Using the posterior distribution constructed from the new (8/15) data, now calculate the prob-
 ability of observing 6 water in 9 tosses.
+
+```{r}
+new_ppc <- rbinom(n = 1e5, size = 9, prob = samples)
+sum(new_ppc == 6) / length(new_ppc)
+```
+
+```{r}
+ggplot(mapping = aes(x = new_ppc)) +
+  geom_bar()
+```
 
 **3M5.** Start over at 3M1, but now use a prior that is zero below p = 0.5 and a constant above p = 0.5.
 This corresponds to prior information that a majority of the Earth’s surface is water. Repeat each
