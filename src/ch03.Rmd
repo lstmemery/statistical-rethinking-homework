@@ -269,6 +269,24 @@ ggplot(mapping = aes(x = p_grid, y = posterior)) +
 bution you calculated above. Use these samples to estimate the 50%, 89%, and 97% highest posterior
 density intervals.
 
+```{r}
+set.seed(100)
+samples <- sample( p_grid , prob = posterior , size = 1e5 , replace = TRUE )
+```
+
+```{r}
+HPDI(samples, prob = 0.5)
+```
+
+```{r}
+HPDI(samples, prob = 0.89)
+```
+
+```{r}
+HPDI(samples, prob = 0.97)
+```
+
+
 **3H3.** Use rbinom to simulate 10,000 replicates of 200 births. You should end up with 10,000 num-
 bers, each one a count of boys out of 200 births. Compare the distribution of predicted numbers
 of boys to the actual count in the data (111 boys out of 200 births). There are many good ways to
