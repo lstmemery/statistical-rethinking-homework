@@ -37,3 +37,42 @@ Answer: $μ_i = α + βx_i$
 **4E5.** In the model definition just above, how many parameters are in the posterior distribution?
 
 Three: $\alpha$, $\beta$ and $\sigma$
+
+## Medium.
+
+**4M1.** For the model definition below, simulate observed heights from the prior (not the posterior).
+
+$$y_i ∼ Normal(μ, σ)$$
+$$μ ∼ Normal(0, 10)$$
+$$σ ∼ Uniform(0, 10)$$
+
+```{r}
+prior <- rnorm(1000, rnorm(1000, 0, 10), runif(1000, 0, 10))
+sample(prior, 100)
+```
+
+
+**4M2.** Translate the model just above into a map formula.
+
+**4M3.** Translate the map model formula below into a mathematical model definition.
+
+```{r}
+flist <- alist(
+y ~ dnorm( mu , sigma ),
+mu <- a + b*x,
+a ~ dnorm( 0 , 50 ),
+b ~ dunif( 0 , 10 ),
+sigma ~ dunif( 0 , 50 )
+)
+```
+
+**4M4.** A sample of students is measured for height each year for 3 years. After the third year, you want
+to fit a linear regression predicting height using year as a predictor. Write down the mathematical
+model definition for this regression, using any variable names and priors you choose. Be prepared to
+defend your choice of priors.
+
+**4M5.** Now suppose I tell you that the average height in the first year was 120 cm and that every
+student got taller each year. Does this information lead you to change your choice of priors? How?
+
+**4M6.** Now suppose I tell you that the variance among heights for students of the same age is never
+more than 64cm. How does this lead you to revise your priors?
