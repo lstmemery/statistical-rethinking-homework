@@ -1,0 +1,33 @@
+---
+title: "Chapter 4"
+author: "Matt Emery"
+date: "October 22, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+**4E1.** In the model definition below, which line is the likelihood?
+
+$$y_i ∼ Normal(μ, σ)$$
+$$μ ∼ Normal(0, 10)$$
+
+$$σ ∼ Uniform(0, 10)$$
+$y_i$ is the likelihood.
+
+**4E2.** In the model definition just above, how many parameters are in the posterior distribution?
+
+There are two paramaters in the posterior distribution.
+
+**4E3.** Using the model definition above, write down the appropriate form of Bayes’ theorem that
+includes the proper likelihood and priors.
+
+**4E4.** In the model definition below, which line is the linear model?
+$$y_i ∼ Normal(μ, σ)$$
+$$μ_i = α + βx_i$$
+$$ α ∼ Normal(0, 10)$$
+$$β ∼ Normal(0, 1)$$
+$$σ ∼ Uniform(0, 10)$$
+4E5. In the model definition just above, how many parameters are in the posterior distribution?
