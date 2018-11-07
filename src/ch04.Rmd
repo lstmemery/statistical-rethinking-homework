@@ -32,4 +32,8 @@ $$μ_i = α + βx_i$$
 $$ α ∼ Normal(0, 10)$$
 $$β ∼ Normal(0, 1)$$
 $$σ ∼ Uniform(0, 10)$$
-4E5. In the model definition just above, how many parameters are in the posterior distribution?
+Answer: $μ_i = α + βx_i$
+
+**4E5.** In the model definition just above, how many parameters are in the posterior distribution?
+
+Three: $\alpha$, $\beta$ and $\sigma$
