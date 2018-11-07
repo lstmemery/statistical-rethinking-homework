@@ -15,14 +15,16 @@ $$y_i ∼ Normal(μ, σ)$$
 $$μ ∼ Normal(0, 10)$$
 
 $$σ ∼ Uniform(0, 10)$$
-$y_i$ is the likelihood.
+$y_i ∼Normal(\mu, \sigma)$ is the likelihood.
 
 **4E2.** In the model definition just above, how many parameters are in the posterior distribution?
 
-There are two paramaters in the posterior distribution.
+There are two paramaters in the posterior distribution: $\mu$ and $\sigma$.
 
 **4E3.** Using the model definition above, write down the appropriate form of Bayes’ theorem that
 includes the proper likelihood and priors.
+
+$$p(\mu,\sigma|y) = \frac{N(y|\mu,\sigma)N(\mu|0, 10)Unif(\sigma|0,10)}{\int\int\ N(y|\mu,\sigma)N(\mu|0, 10)Unif(\sigma|0,10)d\mu d\sigma}$$
 
 **4E4.** In the model definition below, which line is the linear model?
 $$y_i ∼ Normal(μ, σ)$$
