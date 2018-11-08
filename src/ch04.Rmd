@@ -9,6 +9,12 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+
+```{r}
+library(rethinking)
+library(tidyverse)
+```
+
 **4E1.** In the model definition below, which line is the likelihood?
 
 $$y_i ∼ Normal(μ, σ)$$
@@ -51,25 +57,53 @@ prior <- rnorm(1000, rnorm(1000, 0, 10), runif(1000, 0, 10))
 sample(prior, 100)
 ```
 
-
 **4M2.** Translate the model just above into a map formula.
+
+```{r}
+alist(
+  y ~ dnorm(mu, sigma),
+  mu ~ dnorm(0, 10),
+  sigma ~ dunif(0, 10)
+)
+```
+
 
 **4M3.** Translate the map model formula below into a mathematical model definition.
 
 ```{r}
 flist <- alist(
-y ~ dnorm( mu , sigma ),
-mu <- a + b*x,
-a ~ dnorm( 0 , 50 ),
-b ~ dunif( 0 , 10 ),
-sigma ~ dunif( 0 , 50 )
+  y ~ dnorm( mu , sigma ),
+  mu <- a + b*x,
+  a ~ dnorm( 0 , 50 ),
+  b ~ dunif( 0 , 10 ),
+  sigma ~ dunif( 0 , 50 )
 )
 ```
+
+$$
+\begin{eqnarray}
+  y_i \sim N(\mu, \sigma) \\
+  \mu = a + bx_i \\
+  a \sim N(0, 50) \\
+  b \sim Unif(0, 10) \\
+  \sigma \sim Unif(0, 50)
+\end{eqnarray}
+$$
 
 **4M4.** A sample of students is measured for height each year for 3 years. After the third year, you want
 to fit a linear regression predicting height using year as a predictor. Write down the mathematical
 model definition for this regression, using any variable names and priors you choose. Be prepared to
 defend your choice of priors.
+
+$$
+\begin{aligned}
+  y_i \sim N(\mu, \sigma) \\
+  \mu = a + bx_i \\
+  a \sim N(140, 15) \\
+  b \sim Unif(0, 30) \\
+  \sigma \sim Unif(0, 50)
+\end{aligned}
+$$
 
 **4M5.** Now suppose I tell you that the average height in the first year was 120 cm and that every
 student got taller each year. Does this information lead you to change your choice of priors? How?
