@@ -108,5 +108,15 @@ $$
 **4M5.** Now suppose I tell you that the average height in the first year was 120 cm and that every
 student got taller each year. Does this information lead you to change your choice of priors? How?
 
+Assuming that the first year means that $x_i = 1$, then my new prior would be: 
+$$a \sim N(105, 15)$$
+This is 120 - the center of the uniform distribution. $b$ doesn't change because I already accounted for non-negative growth.
+
+**NOTE**: The answer guide seems to suggest that nothing should be changed because the data is now influencing the prior.
+
 **4M6.** Now suppose I tell you that the variance among heights for students of the same age is never
 more than 64cm. How does this lead you to revise your priors?
+
+With the same note as before, I would recommend changing the prior to:
+
+$$\sigma \sim Unif(0, 64)$$
