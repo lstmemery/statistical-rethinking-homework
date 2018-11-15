@@ -231,6 +231,98 @@ predicted heights.
 change, if any, to improve the model. You don’t have to write any new code. Just explain what the
 model appears to be doing a bad job of, and what you hypothesize would be a better model.
 
+```{r}
+howell_children <- Howell1 %>% 
+  filter(age < 18)
+
+nrow(howell_children)
+```
+
+(a) Fit a linear regression to these data, using map . Present and interpret the estimates. For every
+10 units of increase in weight, how much taller does the model predict a child gets?
+
+I made the priors looser to reflect that I think children's heights are more variable than adults.
+
+```{r}
+kung_child_height_model <- alist(
+  height ~ dnorm( mu , sigma ),
+  mu <- a + b*weight,
+  a ~ dnorm( 0 , 100 ),
+  b ~ dunif( 0 , 20 ),
+  sigma ~ dunif( 0 , 100 )
+)
+```
+
+```{r}
+child_kung_model <- rethinking::map(kung_child_height_model, data = howell_children)
+child_kung_model
+```
+
+For every 10 units of weight gained, the model would predict that the child is 27.2 units taller.
+
+(b) Plot the raw data, with height on the vertical axis and weight on the horizontal axis. Super-
+impose the MAP regression line and 89% HPDI for the mean. Also superimpose the 89% HPDI for
+predicted heights.
+
+```{r}
+colnames(howell_children)
+```
+
+```{r}
+child_predictions <- link(child_kung_model, list(weight = howell_children$weight))
+```
+
+```{r}
+tidy_predictions <- as_tibble(child_predictions) %>% 
+  summarise_all(funs(prediction = mean,
+                     lower_bound = round(HPDI(.)[[1]], 2),
+                     upper_bound = round(HPDI(.)[[2]], 2))) %>% 
+  gather()
+```
+
+
+```{r}
+tbl_predictions <- tidy_predictions %>% 
+  mutate(measurement_type = str_remove(key, "V\\d*_"),
+         data_point = str_match(key, "\\d+")) %>% 
+  select(-key) %>% 
+  spread(measurement_type, value) %>% 
+  mutate(data_point = as.numeric(data_point)) %>% 
+  arrange(data_point)
+```
+
+```{r}
+child_simulations <- rethinking::sim(child_kung_model, data = list(weight = howell_children$weight))
+```
+
+```{r}
+ci_child_predictions <- as_tibble(child_predictions) %>% 
+  summarise_all(funs(ci_lower_bound = round(HPDI(.)[[1]], 2),
+                     ci_upper_bound = round(HPDI(.)[[2]], 2))) %>% 
+    gather() %>% 
+  mutate(measurement_type = str_remove(key, "V\\d*_"),
+         data_point = str_match(key, "\\d+")) %>% 
+  select(-key) %>% 
+  spread(measurement_type, value) %>% 
+  mutate(data_point = as.numeric(data_point)) %>% 
+  arrange(data_point)
+
+ci_child_predictions
+```
+
+```{r}
+prediction_children <- bind_cols(howell_children, tbl_predictions, ci_child_predictions)
+```
+
+```{r}
+ggplot(prediction_children, aes(x = weight, y = height)) +
+  geom_point() +
+  geom_line(aes(y = prediction), color = "blue") +
+  geom_ribbon(aes(ymin = ci_lower_bound, ymax = ci_upper_bound), alpha = 0.5) +
+  geom_ribbon(aes(ymin = lower_bound, ymax = upper_bound), alpha = 0.2, fill = "blue")
+```
+
+
 **4H3.** Suppose a colleague of yours, who works on allometry, glances at the practice problems just
 above. Your colleague exclaims, “That’s silly. Everyone knows that it’s only the logarithm of body
 weight that scales with height!” Let’s take your colleague’s advice and see what happens.
