@@ -135,6 +135,54 @@ individuals. That is, fill in the table below, using model-based predictions.
 | 4          | 32.59  |                 |              |
 | 5          | 54.63  |                 |              |
 
+```{r}
+data(Howell1)
+```
+
+```{r}
+kung_height_model <- alist(
+  height ~ dnorm( mu , sigma ),
+  mu <- a + b*weight,
+  a ~ dnorm( 0 , 50 ),
+  b ~ dunif( 0 , 10 ),
+  sigma ~ dunif( 0 , 50 )
+)
+```
+
+```{r}
+fitted_kung_model <- rethinking::map(kung_height_model, data = Howell1)
+```
+
+```{r}
+kung_predictions <- link(fitted_kung_model, list(weight = c(46.95, 43.72, 64.78, 32.59, 54.63)))
+```
+```{r}
+expected_heights <- as_tibble(kung_predictions) %>% 
+  summarise_all(mean) %>% 
+  t() %>% 
+  as.numeric()
+
+expected_heights
+```
+
+```{r}
+interval_89 <- as_tibble(kung_predictions) %>% 
+  summarise_all(~ paste(round(HPDI(.)[[1]],2), "-", round(HPDI(.)[[2]], 2))) %>% 
+  t() %>% 
+  as.character()
+
+interval_89
+```
+
+
+```{r}
+data_frame(Individual = seq(1, 5),
+           Weight = c(46.95, 43.72, 64.78, 32.59, 54.63),
+           `Expected Heights` = expected_heights,
+           `89% Interval` = interval_89)
+```
+
+
 **4H2.** Select out all the rows in the Howell1 data with ages below 18 years of age. If you do it right,
 you should end up with a new data frame with 192 rows in it.
 (a) Fit a linear regression to these data, using map . Present and interpret the estimates. For every
