@@ -182,6 +182,43 @@ data_frame(Individual = seq(1, 5),
            `89% Interval` = interval_89)
 ```
 
+Errors: 
+- Didn't remove < 18 Ages.
+- Calculated predictive intervals, not confidence intervals
+
+```{r}
+howell_adults <- Howell1 %>% 
+  filter(age >= 18)
+```
+
+```{r}
+fitted_kung_model <- rethinking::map(kung_height_model, data = howell_adults)
+kung_predictions <- link(fitted_kung_model, list(weight = c(46.95, 43.72, 64.78, 32.59, 54.63)))
+
+expected_heights <- as_tibble(kung_predictions) %>% 
+  summarise_all(mean) %>% 
+  t() %>% 
+  as.numeric()
+```
+
+```{r}
+kung_simulations <- rethinking::sim(fitted_kung_model, data = list(weight = c(46.95, 43.72, 64.78, 32.59, 54.63)))
+head(kung_simulations)
+```
+
+
+```{r}
+interval_89 <- as_tibble(kung_simulations) %>% 
+  summarise_all(~ paste(round(HPDI(.)[[1]],2), "-", round(HPDI(.)[[2]], 2))) %>% 
+  t() %>% 
+  as.character()
+
+data_frame(Individual = seq(1, 5),
+           Weight = c(46.95, 43.72, 64.78, 32.59, 54.63),
+           `Expected Heights` = expected_heights,
+           `89% Interval` = interval_89)
+```
+
 
 **4H2.** Select out all the rows in the Howell1 data with ages below 18 years of age. If you do it right,
 you should end up with a new data frame with 192 rows in it.
