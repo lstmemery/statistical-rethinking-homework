@@ -296,7 +296,7 @@ child_simulations <- rethinking::sim(child_kung_model, data = list(weight = howe
 ```
 
 ```{r}
-ci_child_predictions <- as_tibble(child_predictions) %>% 
+ci_child_predictions <- as_tibble(child_simulations) %>% 
   summarise_all(funs(ci_lower_bound = round(HPDI(.)[[1]], 2),
                      ci_upper_bound = round(HPDI(.)[[2]], 2))) %>% 
     gather() %>% 
@@ -313,6 +313,11 @@ ci_child_predictions
 ```{r}
 prediction_children <- bind_cols(howell_children, tbl_predictions, ci_child_predictions)
 ```
+
+```{r}
+prediction_children
+```
+
 
 ```{r}
 ggplot(prediction_children, aes(x = weight, y = height)) +
