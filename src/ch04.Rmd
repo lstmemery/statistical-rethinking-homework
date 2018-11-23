@@ -328,12 +328,8 @@ ggplot(prediction_children, aes(x = weight, y = height)) +
 ```
 
 
-**4H3.** Suppose a colleague of yours, who works on allometry, glances at the practice problems just
-above. Your colleague exclaims, “That’s silly. Everyone knows that it’s only the logarithm of body
-weight that scales with height!” Let’s take your colleague’s advice and see what happens.
-(a) Model the relationship between height (cm) and the natural logarithm of weight (log-kg). Use
-the entire Howell1 data frame, all 544 rows, adults and non-adults. Fit this model, using quadratic
-approximation:
+**4H3.** Suppose a colleague of yours, who works on allometry, glances at the practice problems just above. Your colleague exclaims, “That’s silly. Everyone knows that it’s only the logarithm of body weight that scales with height!” Let’s take your colleague’s advice and see what happens.
+(a) Model the relationship between height (cm) and the natural logarithm of weight (log-kg). Use the entire Howell1 data frame, all 544 rows, adults and non-adults. Fit this model, using quadratic approximation:
 
 
 $$
@@ -346,17 +342,86 @@ h_i ∼ Normal(μ_i , σ)\\
 \end{aligned}
 $$
 
-where $h_i$ is the height of individual i and $w_i$ is the weight (in kg) of individual i. The function for
-computing a natural log in R is just log . Can you interpret the resulting estimates?
+
+where $h_i$ is the height of individual i and $w_i$ is the weight (in kg) of individual i. The function for computing a natural log in R is just log . Can you interpret the resulting estimates?
+
+```{r}
+allometry_model <- alist(
+  height ~ dnorm( mu , sigma ),
+  mu <- a + b*log(weight),
+  a ~ dnorm( 178 , 100 ),
+  b ~ dnorm( 0 , 20 ),
+  sigma ~ dunif( 0 , 50 )
+)
+
+allometry_model_map <- rethinking::map(allometry_model, data = Howell1)
+allometry_model_map
+```
+
+You could intrepret this by saying that an increase of in weight of unit on the logarithmic scale on average leads to 47 units of height increase.
 
 (b) Begin with this plot:
 
 ```{r}
 plot( height ~ weight , data = Howell1 ,
-col = col.alpha(rangi2,0.4) )
+col = col.alpha(rangi2, 0.4) )
 ```
 
 Then use samples from the quadratic approximate posterior of the model in (a) to superimpose on
 the plot: (1) the predicted mean height as a function of weight, (2) the 97% HPDI for the mean, and
 (3) the 97% HPDI for predicted heights.
 
+```{r}
+allometry_predictions <- link(allometry_model_map, list(weight = Howell1$weight))
+tidy_allometry_predictions <- as_tibble(allometry_predictions) %>% 
+  summarise_all(funs(prediction = mean,
+                     lower_bound = round(HPDI(., prob = 0.97)[[1]], 2),
+                     upper_bound = round(HPDI(., prob = 0.97)[[2]], 2))) %>% 
+  gather() %>% 
+  mutate(measurement_type = str_remove(key, "V\\d*_"),
+         data_point = str_match(key, "\\d+")) %>% 
+  select(-key) %>% 
+  spread(measurement_type, value) %>% 
+  mutate(data_point = as.numeric(data_point)) %>% 
+  arrange(data_point)
+```
+
+```{r}
+tidy_allometry_predictions
+```
+
+
+```{r}
+allometry_simulations <- rethinking::sim(allometry_model_map, data = list(weight = Howell1$weight))
+
+allometry_prediction_intervals <- as_tibble(allometry_simulations) %>% 
+  summarise_all(funs(ci_lower_bound = round(HPDI(., 0.97)[[1]], 2),
+                     ci_upper_bound = round(HPDI(., 0.97)[[2]], 2))) %>% 
+    gather() %>% 
+  mutate(measurement_type = str_remove(key, "V\\d*_"),
+         data_point = str_match(key, "\\d+")) %>% 
+  select(-key) %>% 
+  spread(measurement_type, value) %>% 
+  mutate(data_point = as.numeric(data_point)) %>% 
+  arrange(data_point)
+
+allometry_prediction_intervals
+```
+
+
+```{r}
+allometry_statistics <- bind_cols(Howell1, tidy_allometry_predictions, allometry_prediction_intervals)
+```
+
+```{r}
+allometry_statistics
+```
+
+
+```{r}
+ggplot(allometry_statistics, aes(x = weight, y = height)) +
+  geom_point(alpha = 0.3) +
+  geom_line(aes(y = prediction), color = "blue") +
+  geom_ribbon(aes(ymin = ci_lower_bound, ymax = ci_upper_bound), alpha = 0.5) +
+  geom_ribbon(aes(ymin = lower_bound, ymax = upper_bound), alpha = 0.2, fill = "blue")
+```
