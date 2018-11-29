@@ -32,6 +32,12 @@ $$y_{timetoPhD} \sim logNorm(\mu_i, \sigma)$$
 $$\mu_i = \alpha + \beta_{funding}x_{funding} + \beta_{labsize}x_{labsize} + \beta_{interaction}x_{funding}x_{labsize}$$
 
 The first two slopes would be near zero, but the interaction term slope would be positive.
+
+Answer Key:
+
+$$\mu_i = \alpha + \beta_{funding}x_{funding} + \beta_{labsize}x_{labsize}$$
+With both slopes positive.
+
 **5E4.** Suppose you have a single categorical predictor with 4 levels (unique values), labeled A, B, C and D. Let $A_i$ be an indicator variable that is 1 where case i is in category A. Also suppose $B_i$ , $C_i$ , and $D_i$ for the other categories. Now which of the following linear models are inferentially equivalent ways to include the categorical variable in a regression? Models are inferentially equivalent when it’s possible to compute one posterior distribution from the posterior distribution of another model.
 
 (1) $μ_i = α + β_AA_i + β_BB_i + β_DD_i$
