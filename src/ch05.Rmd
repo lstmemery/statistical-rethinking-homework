@@ -48,6 +48,10 @@ With both slopes positive.
 
 All of these equations are equivalent.
 
+Answer Key:
+
+Assuming weakly informative priors, all but (2) are equivalent. (2) has a redundant $\alpha$
+
 ## Medium.
 
 **5M1.** Invent your own example of a spurious correlation. An outcome variable should be correlated with both predictor variables. But when both predictors are entered in the same model, the correlation between the outcome and one of the predictors should mostly vanish (or at least be greatly reduced).
