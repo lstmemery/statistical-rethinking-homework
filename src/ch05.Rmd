@@ -50,15 +50,21 @@ All of these equations are equivalent.
 
 Answer Key:
 
-Assuming weakly informative priors, all but (2) are equivalent. (2) has a redundant $\alpha$
+Assuming weakly informative priors, all but (2) are equivalent. (2) has a redundant $\alpha$.
 
 ## Medium.
 
 **5M1.** Invent your own example of a spurious correlation. An outcome variable should be correlated with both predictor variables. But when both predictors are entered in the same model, the correlation between the outcome and one of the predictors should mostly vanish (or at least be greatly reduced).
 
+One example of spurious correlation could be the decline of sea piracy and the increase in CO_2 emissions (the outcome). The mediator here would be year (or possibly industrial activity). 
+
 **5M2.** Invent your own example of a masked relationship. An outcome variable should be correlated with both predictor variables, but in opposite directions. And the two predictor variables should be correlated with one another.
 
+The price of oil and the overall stock index when predicting the performance of an airline. As the price of oil goes up, airline stocks will go down. As the overall stock index goes up, the airline performance will likely improve. The price of oil is associated with many stocks in a stock index.
+
 **5M3.** It is sometimes observed that the best predictor of fire risk is the presence of firefighters—States and localities with many firefighters also have more fires. Presumably firefighters do not cause fires. Nevertheless, this is not a spurious correlation. Instead fires cause firefighters. Consider the same reversal of causal inference in the context of the divorce and marriage data. How might a high divorce rate cause a higher marriage rate? Can you think of a way to evaluate this relationship, using multiple regression?
+
+A higher divorce rate increases the likelihood of remarriages. You could evaluate this relationship by adding average number of remarriages to the multiple regression model.
 
 **5M4.** In the divorce data, States with high numbers of Mormons (members of The Church of Jesus Christ of Latter-day Saints, LDS) have much lower divorce rates than the regression models expected. Find a list of LDS population by State and use those numbers as a predictor variable, predicting divorce rate using marriage rate, median age at marriage, and percent LDS population (possibly standardized). You may want to consider transformations of the raw percent LDS variable.
 
