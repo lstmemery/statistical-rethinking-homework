@@ -66,7 +66,50 @@ The price of oil and the overall stock index when predicting the performance of 
 
 A higher divorce rate increases the likelihood of remarriages. You could evaluate this relationship by adding average number of remarriages to the multiple regression model.
 
+Answer Key:
+
+Also consider a longitudinal study.
+
 **5M4.** In the divorce data, States with high numbers of Mormons (members of The Church of Jesus Christ of Latter-day Saints, LDS) have much lower divorce rates than the regression models expected. Find a list of LDS population by State and use those numbers as a predictor variable, predicting divorce rate using marriage rate, median age at marriage, and percent LDS population (possibly standardized). You may want to consider transformations of the raw percent LDS variable.
+
+```{r}
+library(rethinking)
+library(tidyverse)
+data(WaffleDivorce)
+
+percent_lds <- c(0.75, 4.53, 6.18, 1, 2.01, 2.82, 0.43, 0.55, 0.38,
+0.75, 0.82, 5.18, 26.35, 0.44, 0.66, 0.87, 1.25, 0.77, 0.64, 0.81,
+0.72, 0.39, 0.44, 0.58, 0.72, 1.14, 4.78, 1.29, 0.61, 0.37, 3.34,
+0.41, 0.82, 1.48, 0.52, 1.2, 3.85, 0.4, 0.37, 0.83, 1.27, 0.75,
+1.21, 67.97, 0.74, 1.13, 3.99, 0.92, 0.44, 11.5 )
+
+standard_percent_lds <- (percent_lds - mean(percent_lds)) / sd(percent_lds)
+
+lds_divorce <- WaffleDivorce %>% 
+  mutate(percent_lds = standard_percent_lds,
+         MedianAgeMarriage = (MedianAgeMarriage - mean(MedianAgeMarriage)) / sd(MedianAgeMarriage),
+         Marriage = (Marriage - mean(Marriage)) / sd(Marriage))
+```
+
+
+```{r}
+divorce_lds_model <- alist(
+  Divorce ~ dnorm( mu , sigma ),
+  mu <- a + b_medianage * MedianAgeMarriage + b_marriage * Marriage + b_percent_lds * percent_lds,
+  a ~ dnorm( 0 , 50 ),
+  b_medianage ~ dnorm( -2 , 10 ),
+  b_marriage ~ dnorm( 2, 10),
+  b_percent_lds ~ dnorm(-2, 20),
+  sigma ~ dunif( 0 , 50 )
+)
+
+divorce_lds_map <- rethinking::map(divorce_lds_model, data = lds_divorce)
+```
+
+```{r}
+divorce_lds_map
+```
+
 
 **5M5.** One way to reason through multiple causation hypotheses is to imagine detailed mechanisms through which predictor variables may influence outcomes. For example, it is sometimes argued that the price of gasoline (predictor variable) is positively associated with lower obesity rates (outcome variable). However, there are at least two important mechanisms by which the price of gas could reduce obesity. First, it could lead to less driving and therefore more exercise. Second, it could lead to less driving, which leads to less eating out, which leads to less consumption of huge restaurant meals. Can you outline one or more multiple regressions that address these two mechanisms? Assume you
 can have any predictor data you need.
