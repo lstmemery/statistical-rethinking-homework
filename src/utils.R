@@ -10,8 +10,8 @@ get_expectation_and_ci <- function(predictions, credible_interval = 0.89) {
     dplyr::summarise_all(
       dplyr::funs(
         prediction = mean,
-        lower_bound = round(rethinking::HPDI(.)[[1]], 2), # TODO add custom CI
-        upper_bound = round(rethinking::HPDI(.)[[2]], 2))) %>%
+        lower_bound = round(rethinking::HPDI(., credible_interval)[[1]], 2), # TODO add custom CI
+        upper_bound = round(rethinking::HPDI(., credible_interval)[[2]], 2))) %>%
     tidyr::gather() %>%
     dplyr::mutate(
       measurement_type = stringr::str_remove(.data$key, "V\\d*_"),
