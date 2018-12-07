@@ -36,3 +36,20 @@ plot_expectations <- function(data_points, predictions, x, y) {
         ymax = "upper_bound"), 
       alpha = 0.5)
 }
+
+run_predictive_analysis <- function(model, 
+                                    dataset, 
+                                    controlling_variable = c(), 
+                                    x, 
+                                    y) {
+  model_map <- rethinking::map(model, data = dataset)
+  
+  if (length(controlling_variable) > 0 ) {
+    dataset <- dataset %>%
+      dplyr::mutate_at(controlling_variable, mean)
+  }
+  
+  predictions <- rethinking::link(model_map, dataset)
+  expectations <- get_expectation_and_ci(predictions, 0.95)
+  plot_expectations(dataset, expectations, x, y)
+}

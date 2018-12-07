@@ -191,4 +191,33 @@ Neither of these predictors look predictive.
 
 **5H2.** Now fit a multiple linear regression with weight as the outcome and both area and groupsize as predictor variables. Plot the predictions of the model for each predictor, holding the other predictor constant at its mean. What does this model say about the importance of each variable? Why do you get different results than you got in the exercise just above?
 
+```{r}
+combined_model <- alist(
+  weight ~ dnorm(mu, sigma),
+  mu <- alpha + b_area * area + b_groupsize * groupsize,
+  alpha ~ dnorm(0, 50),
+  b_area ~ dnorm(2, 5),
+  b_groupsize ~ dnorm(2, 5),
+  sigma ~ dunif(0, 50)
+)
+```
+
+```{r}
+run_predictive_analysis(combined_model, 
+                        standard_foxes,
+                        c("groupsize"),
+                        "area",
+                        "weight")
+```
+
+```{r}
+run_predictive_analysis(combined_model, 
+                        standard_foxes,
+                        c("area"),
+                        "groupsize",
+                        "weight")
+```
+
+Now area is positively associated with weight and group size is negatively associated. I believe this relationship was masked.
+
 **5H3.** Finally, consider the avgfood variable. Fit two more multiple regressions: (1) body weight as an additive function of avgfood and groupsize , and (2) body weight as an additive function of all three variables, avgfood and groupsize and area . Compare the results of these models to the previous models you’ve fit, in the first two exercises. (a) Is avgfood or area a better predictor of body weight? If you had to choose one or the other to include in a model, which would it be? Support your assessment with any tables or plots you choose. (b) When both avgfood or area are in the same model, their effects are reduced (closer to zero) and their standard errors are larger than when they are included in separate models. Can you explain this result?
