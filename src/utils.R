@@ -10,7 +10,7 @@ get_expectation_and_ci <- function(predictions, credible_interval = 0.89) {
     dplyr::summarise_all(
       dplyr::funs(
         prediction = mean,
-        lower_bound = round(rethinking::HPDI(., credible_interval)[[1]], 2), # TODO add custom CI
+        lower_bound = round(rethinking::HPDI(., credible_interval)[[1]], 2),
         upper_bound = round(rethinking::HPDI(., credible_interval)[[2]], 2))) %>%
     tidyr::gather() %>%
     dplyr::mutate(
@@ -20,4 +20,19 @@ get_expectation_and_ci <- function(predictions, credible_interval = 0.89) {
     tidyr::spread(key = .data$measurement_type, value = .data$value) %>% 
     dplyr::mutate(data_point = as.numeric(.data$data_point)) %>% 
     dplyr::arrange(.data$data_point)
+}
+
+plot_expectations <- function(data_points, predictions, x, y) {
+  df <- dplyr::bind_cols(data_points, predictions)
+  
+  ggplot2::ggplot(df, ggplot2::aes_string(x = x, y = y)) +
+    ggplot2::geom_point() +
+    ggplot2::geom_line(
+      ggplot2::aes_string(y = "prediction"), 
+      color = "blue") +
+    ggplot2::geom_ribbon(
+      ggplot2::aes_string(
+        ymin = "lower_bound", 
+        ymax = "upper_bound"), 
+      alpha = 0.5)
 }

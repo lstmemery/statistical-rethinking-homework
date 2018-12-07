@@ -107,12 +107,16 @@ divorce_lds_map <- rethinking::map(divorce_lds_model, data = lds_divorce)
 ```
 
 ```{r}
-divorce_lds_map
+precis(divorce_lds_map)
 ```
 
 **5M5.** One way to reason through multiple causation hypotheses is to imagine detailed mechanisms through which predictor variables may influence outcomes. For example, it is sometimes argued that the price of gasoline (predictor variable) is positively associated with lower obesity rates (outcome variable). However, there are at least two important mechanisms by which the price of gas could reduce obesity. First, it could lead to less driving and therefore more exercise. Second, it could lead to less driving, which leads to less eating out, which leads to less consumption of huge restaurant meals. Can you outline one or more multiple regressions that address these two mechanisms? Assume you can have any predictor data you need.
 
 I would make a model that predicted BMI and would have height, average price of gasoline in the last 30 days, number of visits to the gym or recorded exercises in the last 30 days and the number of resteraunt visits in the last thirty days.
+
+Answer Key:
+
+The answer key suggests also controlling for wealth, since the wealthy are less sensitive to gasoline prices.
 
 ## Hard.
 
@@ -123,7 +127,67 @@ All three exercises below use the same data, `data(foxes)` (part of rethinking )
 (4) `area` : Size of the territory
 (5) `weight` : Body weight of the individual fox
 
+```{r}
+standardize <- function(x) {
+  (x - mean(x)) / sd(x)
+}
+```
+
+
+```{r}
+data("foxes")
+standard_foxes <- foxes %>% 
+  mutate_at(vars(one_of("weight", "area", "avgfood")), standardize)
+```
+
+
 **5H1.** Fit two bivariate Gaussian regressions, using map : (1) body weight as a linear function of territory size ( area ), and (2) body weight as a linear function of groupsize . Plot the results of these regressions, displaying the MAP regression line and the 95% interval of the mean. Is either variable important for predicting fox body weight?
+
+```{r}
+source('utils.R')
+```
+
+```{r}
+# Body weight and territory size
+territory_size_model <- alist(
+  weight ~ dnorm(mu, sigma),
+  mu <- alpha + beta * area,
+  alpha ~ dnorm(0, 50),
+  beta ~ dnorm(2, 5),
+  sigma ~ dunif(0, 50)
+)
+territory_size_map <- rethinking::map(territory_size_model, data = standard_foxes)
+```
+
+```{r}
+standard_fox_predictions <- rethinking::link(territory_size_map, standard_foxes)
+```
+
+```{r}
+standard_fox_expectations <- get_expectation_and_ci(standard_fox_examples, 0.95)
+sample_n(standard_fox_expectations, 5)
+```
+
+```{r}
+plot_expectations(standard_foxes, standard_fox_expectations, "area", "weight")
+```
+
+```{r}
+# Body weight and group size
+group_size_model <- alist(
+  weight ~ dnorm(mu, sigma),
+  mu <- alpha + beta * groupsize,
+  alpha ~ dnorm(0, 50),
+  beta ~ dnorm(2, 5),
+  sigma ~ dunif(0, 50)
+)
+group_size_map <- rethinking::map(group_size_model, data = standard_foxes)
+standard_fox_predictions <- rethinking::link(group_size_map, standard_foxes)
+standard_fox_expectations <- get_expectation_and_ci(standard_fox_predictions, 0.95)
+plot_expectations(standard_foxes, standard_fox_expectations, "groupsize", "weight")
+```
+
+Neither of these predictors look predictive.
 
 **5H2.** Now fit a multiple linear regression with weight as the outcome and both area and groupsize as predictor variables. Plot the predictions of the model for each predictor, holding the other predictor constant at its mean. What does this model say about the importance of each variable? Why do you get different results than you got in the exercise just above?
 
