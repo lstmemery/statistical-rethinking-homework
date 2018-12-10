@@ -44,6 +44,8 @@ run_predictive_analysis <- function(model,
                                     y) {
   model_map <- rethinking::map(model, data = dataset)
   
+  print(rethinking::precis(model_map))
+  
   if (length(controlling_variable) > 0 ) {
     dataset <- dataset %>%
       dplyr::mutate_at(controlling_variable, mean)

@@ -221,3 +221,69 @@ run_predictive_analysis(combined_model,
 Now area is positively associated with weight and group size is negatively associated. I believe this relationship was masked.
 
 **5H3.** Finally, consider the avgfood variable. Fit two more multiple regressions: (1) body weight as an additive function of avgfood and groupsize , and (2) body weight as an additive function of all three variables, avgfood and groupsize and area . Compare the results of these models to the previous models you’ve fit, in the first two exercises. (a) Is avgfood or area a better predictor of body weight? If you had to choose one or the other to include in a model, which would it be? Support your assessment with any tables or plots you choose. (b) When both avgfood or area are in the same model, their effects are reduced (closer to zero) and their standard errors are larger than when they are included in separate models. Can you explain this result?
+
+```{r}
+avgfood_1_model <- alist(
+  weight ~ dnorm(mu, sigma),
+  mu <- alpha + b_avgfood * avgfood + b_groupsize * groupsize,
+  alpha ~ dnorm(0, 50),
+  b_avgfood ~ dnorm(2, 5),
+  b_groupsize ~ dnorm(2, 5),
+  sigma ~ dunif(0, 50)
+)
+run_predictive_analysis(avgfood_1_model, 
+                        standard_foxes,
+                        c("groupsize"),
+                        "avgfood",
+                        "weight")
+```
+
+```{r}
+run_predictive_analysis(avgfood_1_model, 
+                        standard_foxes,
+                        c("avgfood"),
+                        "groupsize",
+                        "weight")
+```
+
+```{r}
+full_model <- alist(
+  weight ~ dnorm(mu, sigma),
+  mu <- alpha + b_avgfood * avgfood + b_area * area + b_groupsize * groupsize,
+  alpha ~ dnorm(0, 50),
+  b_avgfood ~ dnorm(2, 5),
+  b_area ~ dnorm(2, 5),
+  b_groupsize ~ dnorm(2, 5),
+  sigma ~ dunif(0, 50)
+)
+
+run_predictive_analysis(full_model, 
+                        standard_foxes,
+                        c("area", "groupsize"),
+                        "avgfood",
+                        "weight")
+```
+
+```{r}
+run_predictive_analysis(full_model, 
+                        standard_foxes,
+                        c("avgfood", "groupsize"),
+                        "area",
+                        "weight")
+```
+
+```{r}
+run_predictive_analysis(full_model, 
+                        standard_foxes,
+                        c("avgfood", "area"),
+                        "groupsize",
+                        "weight")
+```
+
+I think that avgfood food is a better predictor than area. I believe this becauase it is less likely that the avgfood food parameter is zero.
+
+```{r}
+cor(standard_foxes$avgfood, standard_foxes$area)
+```
+
+The reason why the standard errors increased is because the variables are very collinear, which leads to non-identifibility problems.
