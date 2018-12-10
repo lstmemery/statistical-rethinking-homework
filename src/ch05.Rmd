@@ -287,3 +287,8 @@ cor(standard_foxes$avgfood, standard_foxes$area)
 ```
 
 The reason why the standard errors increased is because the variables are very collinear, which leads to non-identifibility problems.
+
+Answer Key:
+
+Suggests using Log-Likelihood to compare models. When doing so, avgfood does come out slightly better than area.
+

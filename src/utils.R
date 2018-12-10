@@ -45,6 +45,7 @@ run_predictive_analysis <- function(model,
   model_map <- rethinking::map(model, data = dataset)
   
   print(rethinking::precis(model_map))
+  print(-rethinking::logLik(model_map))
   
   if (length(controlling_variable) > 0 ) {
     dataset <- dataset %>%
