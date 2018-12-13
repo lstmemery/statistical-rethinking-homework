@@ -1,0 +1,97 @@
+---
+title: "Chapter 6"
+author: "Matt Emery"
+date: "December 13, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Easy.
+
+**6E1.** State the three motivating criteria that define information entropy. Try to express each in your own words.
+
+**6E2.** Suppose a coin is weighted such that, when it is tossed and lands on a table, it comes up heads 70% of the time. What is the entropy of this coin?
+
+**6E3.** Suppose a four-sided die is loaded such that, when tossed onto a table, it shows “1” 20%, “2” 25%, ”3” 25%, and ”4” 30% of the time. What is the entropy of this die?
+
+**6E4.** Suppose another four-sided die is loaded such that it never shows “4”. The other three sides show equally often. What is the entropy of this die?
+
+## Medium.
+
+**6M1.** Write down and compare the definitions of AIC, DIC, and WAIC. Which of these criteria is most general? Which assumptions are required to transform a more general criterion into a less general one?
+
+**6M2.** Explain the difference between model selection and model averaging. What information is lost under model selection? What information is lost under model averaging?
+
+**6M3.** When comparing models with an information criterion, why must all models be fit to exactly the same observations? What would happen to the information criterion values, if the models were fit to different numbers of observations? Perform some experiments, if you are not sure.
+
+**6M4.** What happens to the effective number of parameters, as measured by DIC or WAIC, as a prior becomes more concentrated? Why? Perform some experiments, if you are not sure.
+
+**6M5.** Provide an informal explanation of why informative priors reduce overfitting.
+
+**6M6.** Provide an information explanation of why overly informative priors result in underfitting.
+
+## Hard.
+
+All practice problems to follow use the same data. Pull out the old Howell !Kung demography data and split it into two equally sized data frames. Here’s the code to do it:
+
+```{r}
+library(rethinking)
+data(Howell1)
+d <- Howell1
+d$age <- (d$age - mean(d$age))/sd(d$age)
+set.seed( 1000 )
+i <- sample(1:nrow(d), size = nrow(d)/2)
+d1 <- d[ i , ]
+d2 <- d[ -i , ]
+```
+
+You now have two randomly formed data frames, each with 272 rows. The notion here is to use the cases in d1 to fit models and the cases in d2 to evaluate them. The set.seed command just ensures that everyone works with the same randomly shuffled data. Now let h i and x i be the height and centered age values, respectively, on row i. Fit the following models to the data in d1:
+
+$$\mathcal { M } _ { 1 } : h _ { i } \sim \mathrm { Normal } \left( \mu _ { i } , \sigma \right)$$
+$$\mu _ { i } = \alpha + \beta _ { 1 } x _ { i }$$
+$$\mathcal { M } _ { 2 } : h _ { i } \sim \mathrm { Normal } \left( \mu _ { i } , \sigma \right)$$
+$$\mu _ { i } = \alpha + \beta _ { 1 } x _ { i } + \beta _ { 2 } x _ { i } ^ { 2 }$$
+$$\mathcal { M } _ { 3 } : h _ { i } \sim \mathrm { Normal } \left( \mu _ { i } , \sigma \right)$$
+$$\mu _ { i } = \alpha + \beta _ { 1 } x _ { i } + \beta _ { 2 } x _ { i } ^ { 2 } + \beta _ { 3 } x _ { i } ^ { 3 }$$
+$$\mathcal { M } _ { 4 } : h _ { i } \sim \mathrm { Normal } \left( \mu _ { i } , \sigma \right)$$
+$$\mu _ { i } = \alpha + \beta _ { 1 } x _ { i } + \beta _ { 2 } x _ { i } ^ { 2 } + \beta _ { 3 } x _ { i } ^ { 3 } + \beta _ { 4 } x _ { i } ^ { 4 }$$
+$$\mathcal { M } _ { 5 } : h _ { i } \sim \mathrm { Normal } \left( \mu _ { i } , \sigma \right)$$
+$$\mu _ { i } = \alpha + \beta _ { 1 } x _ { i } + \beta _ { 2 } x _ { i } ^ { 2 } + \beta _ { 3 } x _ { i } ^ { 3 } + \beta _ { 4 } x _ { i } ^ { 4 } + \beta _ { 5 } x _ { i } ^ { 5 }$$
+$$\mathcal { M } _ { 6 } : h _ { i } \sim \mathrm { Normal } \left( \mu _ { i } , \sigma \right)$$
+$$\mu _ { i } = \alpha + \beta _ { 1 } x _ { i } + \beta _ { 2 } x _ { i } ^ { 2 } + \beta _ { 3 } x _ { i } ^ { 3 } + \beta _ { 4 } x _ { i } ^ { 4 } + \beta _ { 5 } x _ { i } ^ { 5 } + \beta _ { 6 } x _ { i } ^ { 6 }$$
+
+Use map to fit these. Use weakly regularizing priors for all parameters.
+
+Note that fitting all of these polynomials to the height-by-age relationship is not a good way to derive insight. It would be better to have a simpler approach that would allow for more insight, like perhaps a piecewise linear model. But the set of polynomial families above will serve to help you practice and understand model comparison and averaging.
+
+**6H1.** Compare the models above, using WAIC. Compare the model rankings, as well as the WAIC weights.
+
+**6H2.** For each model, produce a plot with model averaged mean and 97% confidence interval of the mean, superimposed on the raw data. How do predictions differ across models?
+
+**6H3.** Now also plot the model averaged predictions, across all models. In what ways do the averaged predictions differ from the predictions of the model with the lowest WAIC value?
+
+**6H4.** Compute the test-sample deviance for each model. This means calculating deviance, but using the data in d2 now. You can compute the log-likelihood of the height data with:
+
+```{r}
+sum( dnorm( d2$height , mu , sigma , log=TRUE ) )
+```
+
+where mu is a vector of predicted means (based upon age values and MAP parameters) and sigma is the MAP standard deviation.
+
+**6H5.** Compare the deviances from **6H4** to the WAIC values. It might be easier to compare if you subtract the smallest value in each list from the others. For example, subtract the minimum WAIC from all of the WAIC values so that the best WAIC is normalized to zero. Which model makes the best out-of-sample predictions in this case? Does WAIC do a good job of estimating the test deviance?
+
+$$h _ { i } \sim \operatorname { Normal } \left( \mu _ { i } , \sigma \right)$$
+$$\mu _ { i } = \alpha + \beta _ { 1 } x _ { i } + \beta _ { 2 } x _ { i } ^ { 2 } + \beta _ { 3 } x _ { i } ^ { 3 } + \beta _ { 4 } x _ { i } ^ { 4 } + \beta _ { 5 } x _ { i } ^ { 5 } + \beta _ { 6 } x _ { i } ^ { 6 }$$
+$$\beta _ { 1 } \sim \operatorname { Normal } ( 0,5 )$$
+$$\beta _ { 2 } \sim \operatorname { Normal } ( 0,5 )$$
+$$\beta _ { 3 } \sim \operatorname { Normal } ( 0,5 )$$
+$$\beta _ { 4 } \sim \operatorname { Normal } ( 0,5 )$$
+$$\beta _ { 5 } \sim \operatorname { Normal } ( 0,5 )$$
+$$\beta _ { 6 } \sim \operatorname { Normal } ( 0,5 )$$
+
+and assume flat (or nearly flat) priors on α and σ. This model contains more strongly regularizing priors on the coefficients.
+
+First, fit this model to the data in d1 . Report the MAP estimates and plot the implied predictions. Then compute the out-of-sample deviance using the data in d2 , using MAP estimates from the model fit to d1 only. How does this model, using regularizing priors, compare to the best WAIC model from earlier? How do you interpret this result?
