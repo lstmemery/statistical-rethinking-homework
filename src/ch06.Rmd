@@ -13,6 +13,10 @@ knitr::opts_chunk$set(echo = TRUE)
 
 **6E1.** State the three motivating criteria that define information entropy. Try to express each in your own words.
 
+1. The function must be continuous, meaning that a small change can't cause an infinite increase.
+2. The function should increase as the number of possibilities increase.
+3. It must be additive. This means you should be able to combine entropies together.
+
 **6E2.** Suppose a coin is weighted such that, when it is tossed and lands on a table, it comes up heads 70% of the time. What is the entropy of this coin?
 
 **6E3.** Suppose a four-sided die is loaded such that, when tossed onto a table, it shows “1” 20%, “2” 25%, ”3” 25%, and ”4” 30% of the time. What is the entropy of this die?
