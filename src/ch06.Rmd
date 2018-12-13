@@ -9,6 +9,11 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+```{r}
+library(tidyverse)
+```
+
+
 ## Easy.
 
 **6E1.** State the three motivating criteria that define information entropy. Try to express each in your own words.
@@ -19,9 +24,31 @@ knitr::opts_chunk$set(echo = TRUE)
 
 **6E2.** Suppose a coin is weighted such that, when it is tossed and lands on a table, it comes up heads 70% of the time. What is the entropy of this coin?
 
+```{r}
+info_entropy <- function(probabilities) {
+  -sum(purrr::map_dbl(probabilities, ~ .*log(.)))
+}
+```
+
+
+```{r}
+info_entropy(c(0.7, 0.3))
+```
+
 **6E3.** Suppose a four-sided die is loaded such that, when tossed onto a table, it shows “1” 20%, “2” 25%, ”3” 25%, and ”4” 30% of the time. What is the entropy of this die?
 
+```{r}
+info_entropy(c(0.2, 0.25, 0.25, 0.3))
+```
+
 **6E4.** Suppose another four-sided die is loaded such that it never shows “4”. The other three sides show equally often. What is the entropy of this die?
+
+If an event never occurs, it's not considered
+
+```{r}
+info_entropy(c(1/3, 1/3, 1/3))
+```
+
 
 ## Medium.
 
