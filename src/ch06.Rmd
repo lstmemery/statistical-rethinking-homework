@@ -76,7 +76,30 @@ WAIC is calculated pointwise. lppd is the sum of average log-likelihood for each
 
 **6M2.** Explain the difference between model selection and model averaging. What information is lost under model selection? What information is lost under model averaging?
 
+Model selection means choosing a model based on some information criteria (or cross-validation). Model averaging involves creating an ensemble weighted by the difference in informatian criteria. Using model selection means removing information about the IC distances of models. Model averaging combines uncertainties, so information about individual uncertainities in the ensemble prediction are lost.
+
 **6M3.** When comparing models with an information criterion, why must all models be fit to exactly the same observations? What would happen to the information criterion values, if the models were fit to different numbers of observations? Perform some experiments, if you are not sure.
+
+```{r}
+set.seed(0)
+dataset <- matrix(rnorm(n = 300, mean = 0, sd = 1), nrow = 100)
+target <- rowSums(dataset) * rnorm(100)
+df <- as_data_frame(dataset) %>% 
+  mutate(target = target)
+```
+
+```{r}
+model <- alist(
+  target ~ dnorm(mu, sigma),
+  mu = a + b1 * V1 + b2 * V2 + b3 * V3,
+  a ~ dnorm(0, 5)
+  b1 ~ dnorm(0, 1),
+  b2 ~ dnorm(0, 1),
+  b3 ~ dnorm(0, 1),
+  sigma ~ dunif(0, 50)
+               )
+```
+
 
 **6M4.** What happens to the effective number of parameters, as measured by DIC or WAIC, as a prior becomes more concentrated? Why? Perform some experiments, if you are not sure.
 
