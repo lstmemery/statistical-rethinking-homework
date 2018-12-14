@@ -49,10 +49,30 @@ If an event never occurs, it's not considered
 info_entropy(c(1/3, 1/3, 1/3))
 ```
 
-
 ## Medium.
 
 **6M1.** Write down and compare the definitions of AIC, DIC, and WAIC. Which of these criteria is most general? Which assumptions are required to transform a more general criterion into a less general one?
+
+$$\mathrm { AIC } = D _ { \mathrm { train } } + 2 p$$
+
+D_train is the deviance in the predictions on the training set and p is the number of parameters in the model. 
+
+DIC is more broad than AIC.
+
+$$\mathrm { DIC } = \overline { D } + ( \overline { D } - \hat { D } ) = \overline { D } + p _ { D }$$
+
+Now deviance is a distribution. $\overline { D }$ is the average of the distribution. $\hat { D }$ is the average of each parameter in the posterior distribution. $p _ { D }$ is the difference between the two and represents the effective number of parameters in a model. When the priors are flat, $p _ { D }$ becomes $2p$.
+
+WAIC is the most broad of the three.
+
+$$\operatorname { lppd } = \sum _ { i = 1 } ^ { N } \log \operatorname { Pr } \left( y _ { i } \right)$$
+
+
+$$p _ { \mathrm { WAIC } } = \sum _ { i = 1 } ^ { N } V \left( y _ { i } \right)$$
+
+$$\mathrm { WAIC } = - 2 \left( \operatorname { lppd } - p _ { \mathrm { WAIC } } \right)$$
+
+WAIC is calculated pointwise. lppd is the sum of average log-likelihood for each point in the training sample. p_WAIC is the sum of variances in log-likelihood for each item. WAIC no longer requires a Gaussian posterior and can accept hierarchical models. WAIC tends towards DIC as the amount of data overwhelms the prior and the deviance can be adequately described by the mean of the point devfiances.
 
 **6M2.** Explain the difference between model selection and model averaging. What information is lost under model selection? What information is lost under model averaging?
 
