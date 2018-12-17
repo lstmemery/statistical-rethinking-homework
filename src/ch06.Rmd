@@ -156,6 +156,8 @@ Informative priors act as "previous data" to the model. If you have informative 
 
 **6M6.** Provide an information explanation of why overly informative priors result in underfitting.
 
+If the "true" parameter is far from the center of the prior and the prior is very informative, the there may not be enough data to overwhelm the prior.
+
 ## Hard.
 
 All practice problems to follow use the same data. Pull out the old Howell !Kung demography data and split it into two equally sized data frames. Here’s the code to do it:
