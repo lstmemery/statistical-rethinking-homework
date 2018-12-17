@@ -148,9 +148,11 @@ fit_model <- rethinking::map(wide_prior_model, data = df[1:100,])
 attr(WAIC(fit_model), "pWAIC")
 ```
 
-In the case of tight priors, WAIC is lower. This is because the number of effective parameters is also lower.
+In the case of tight priors, WAIC is lower. This is because the number of effective parameters is also lower. 
 
 **6M5.** Provide an informal explanation of why informative priors reduce overfitting.
+
+Informative priors act as "previous data" to the model. If you have informative priors, a lot of data is required to change the parameters.
 
 **6M6.** Provide an information explanation of why overly informative priors result in underfitting.
 
