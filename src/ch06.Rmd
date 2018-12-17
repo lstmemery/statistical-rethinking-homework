@@ -82,17 +82,18 @@ Model selection means choosing a model based on some information criteria (or cr
 
 ```{r}
 set.seed(0)
-dataset <- matrix(rnorm(n = 300, mean = 0, sd = 1), nrow = 100)
+dataset <- matrix(rnorm(n = 3000, mean = 0, sd = 1), nrow = 1000)
 target <- rowSums(dataset) * rnorm(100)
 df <- as_data_frame(dataset) %>% 
-  mutate(target = target)
+  mutate(target = target) %>% 
+  as.data.frame()
 ```
 
 ```{r}
 model <- alist(
   target ~ dnorm(mu, sigma),
-  mu = a + b1 * V1 + b2 * V2 + b3 * V3,
-  a ~ dnorm(0, 5)
+  mu <- a + b1 * V1 + b2 * V2 + b3 * V3,
+  a ~ dnorm(0, 5),
   b1 ~ dnorm(0, 1),
   b2 ~ dnorm(0, 1),
   b3 ~ dnorm(0, 1),
@@ -100,6 +101,17 @@ model <- alist(
                )
 ```
 
+```{r}
+fit_model <- rethinking::map(model, data = df)
+WAIC(fit_model)[[1]]
+```
+
+```{r}
+fit_model <- rethinking::map(model, data = df[1:100,])
+WAIC(fit_model)[[1]]
+```
+
+WAIC is 10 times lower for when there is 10 times less data. If we believed that we could compare between datasets we would choose to have less data.
 
 **6M4.** What happens to the effective number of parameters, as measured by DIC or WAIC, as a prior becomes more concentrated? Why? Perform some experiments, if you are not sure.
 
