@@ -271,7 +271,16 @@ rethinking::compare(fit_first_model, fit_second_model, fit_third_model, fit_four
 
 The fourth model was found to me the "best." 
 
+Answer Key:
+
+It should be noted that the standard error shows that there's a lot of overlap between performance in the fourth, fifth and sixth model.
+
 **6H2.** For each model, produce a plot with model averaged mean and 97% confidence interval of the mean, superimposed on the raw data. How do predictions differ across models?
+
+```{r}
+
+```
+
 
 **6H3.** Now also plot the model averaged predictions, across all models. In what ways do the averaged predictions differ from the predictions of the model with the lowest WAIC value?
 
