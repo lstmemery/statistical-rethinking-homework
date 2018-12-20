@@ -278,7 +278,53 @@ It should be noted that the standard error shows that there's a lot of overlap b
 **6H2.** For each model, produce a plot with model averaged mean and 97% confidence interval of the mean, superimposed on the raw data. How do predictions differ across models?
 
 ```{r}
+source('utils.R')
+```
 
+```{r}
+first_predictions <- rethinking::link(fit_first_model, data = d1)
+first_expectations <- get_expectation_and_ci(first_predictions, credible_interval = 0.97)
+plot_expectations(data_points = d1,
+                  expectations = first_expectations,
+                  x = "age",
+                  y = "height")
+```
+
+```{r}
+view_expectations <- function(fit_model, data, x, y, ci, title) {
+  predictions <- rethinking::link(fit_model, data = data)
+  expectations <- get_expectation_and_ci(predictions, credible_interval = ci)
+  plot_expectations(
+    data_points = d1,
+    expectations = expectations,
+    x = x,
+    y = y
+  ) +
+    ggtitle(title)
+}
+
+partial_view_expectations <- partial(view_expectations, 
+                                     data = d1, 
+                                     x = "age", 
+                                     y = "height", 
+                                     ci = 0.97)
+```
+
+```{r}
+library(gridExtra)
+```
+
+
+```{r}
+all_models <- list(fit_first_model, fit_second_model, fit_third_model, fit_fourth_model, fit_fifth_model, fit_sixth_model)
+
+all_titles <- c("First", "Second", "Third", "Fourth", "Fifth", "Sixth")
+
+all_plots <- purrr::map2(all_models, all_titles, partial_view_expectations)
+```
+
+```{r}
+all_plots
 ```
 
 

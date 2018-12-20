@@ -22,8 +22,8 @@ get_expectation_and_ci <- function(predictions, credible_interval = 0.89) {
     dplyr::arrange(.data$data_point)
 }
 
-plot_expectations <- function(data_points, predictions, x, y) {
-  df <- dplyr::bind_cols(data_points, predictions)
+plot_expectations <- function(data_points, expectations, x, y) {
+  df <- dplyr::bind_cols(data_points, expectations)
   
   ggplot2::ggplot(df, ggplot2::aes_string(x = x, y = y)) +
     ggplot2::geom_point() +
