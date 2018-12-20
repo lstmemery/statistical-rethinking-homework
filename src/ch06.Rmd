@@ -103,12 +103,12 @@ model <- alist(
 
 ```{r}
 fit_model <- rethinking::map(model, data = df)
-WAIC(fit_model)[[1]]
+rethinking::WAIC(fit_model)[[1]]
 ```
 
 ```{r}
 fit_model <- rethinking::map(model, data = df[1:100,])
-WAIC(fit_model)[[1]]
+rethinking::WAIC(fit_model)[[1]]
 ```
 
 WAIC is 10 times lower for when there is 10 times less data. If we believed that we could compare between datasets we would choose to have less data.
@@ -117,7 +117,7 @@ WAIC is 10 times lower for when there is 10 times less data. If we believed that
 
 ```{r}
 fit_model <- rethinking::map(model, data = df[1:100,])
-attr(WAIC(fit_model), "pWAIC")
+attr(rethinking::WAIC(fit_model), "pWAIC")
 ```
 
 ```{r}
@@ -131,7 +131,7 @@ tight_prior_model <- alist(
   sigma ~ dunif(0, 5)
                )
 fit_model <- rethinking::map(tight_prior_model, data = df[1:100,])
-attr(WAIC(fit_model), "pWAIC")
+attr(rethinking::WAIC(fit_model), "pWAIC")
 ```
 
 ```{r}
@@ -145,7 +145,7 @@ wide_prior_model <- alist(
   sigma ~ dunif(0, 500)
                )
 fit_model <- rethinking::map(wide_prior_model, data = df[1:100,])
-attr(WAIC(fit_model), "pWAIC")
+attr(rethinking::WAIC(fit_model), "pWAIC")
 ```
 
 In the case of tight priors, WAIC is lower. This is because the number of effective parameters is also lower. 
@@ -173,7 +173,7 @@ d1 <- d[ i , ]
 d2 <- d[ -i , ]
 ```
 
-You now have two randomly formed data frames, each with 272 rows. The notion here is to use the cases in d1 to fit models and the cases in d2 to evaluate them. The set.seed command just ensures that everyone works with the same randomly shuffled data. Now let h i and x i be the height and centered age values, respectively, on row i. Fit the following models to the data in d1:
+You now have two randomly formed data frames, each with 272 rows. The notion here is to use the cases in d1 to fit models and the cases in d2 to evaluate them. The set.seed command just ensures that everyone works with the same randomly shuffled data. Now let $h_i$ and $x_i$ be the height and centered age values, respectively, on row i. Fit the following models to the data in d1:
 
 $$\mathcal { M } _ { 1 } : h _ { i } \sim \mathrm { Normal } \left( \mu _ { i } , \sigma \right)$$
 $$\mu _ { i } = \alpha + \beta _ { 1 } x _ { i }$$
@@ -192,7 +192,84 @@ Use map to fit these. Use weakly regularizing priors for all parameters.
 
 Note that fitting all of these polynomials to the height-by-age relationship is not a good way to derive insight. It would be better to have a simpler approach that would allow for more insight, like perhaps a piecewise linear model. But the set of polynomial families above will serve to help you practice and understand model comparison and averaging.
 
+```{r}
+first_model <- alist(
+  height ~ dnorm(mu, sigma),
+  mu <- a + b_1 * age,
+  a ~ dnorm(0, 5),
+  b_1 ~ dnorm(0, 5),
+  sigma ~ dunif(0, 25)
+)
+fit_first_model <- rethinking::map(first_model, data = d1)
+
+second_model <- alist(
+  height ~ dnorm(mu, sigma),
+  mu <- a + b_1 * age + b_2 * age ^ 2,
+  a ~ dnorm(0, 5),
+  b_1 ~ dnorm(0, 5),
+  b_2 ~ dnorm(0, 5),
+  sigma ~ dunif(0, 25)
+)
+fit_second_model <- rethinking::map(second_model, data = d1)
+
+third_model <- alist(
+  height ~ dnorm(mu, sigma),
+  mu <- a + b_1 * age + b_2 * age ^ 2 + b_3 * age ^ 3,
+  a ~ dnorm(0, 5),
+  b_1 ~ dnorm(0, 5),
+  b_2 ~ dnorm(0, 5),
+  b_3 ~ dnorm(0, 5),
+  sigma ~ dunif(0, 25)
+)
+fit_third_model <- rethinking::map(third_model, data = d1)
+
+fourth_model <- alist(
+  height ~ dnorm(mu, sigma),
+  mu <- a + b_1 * age + b_2 * age ^ 2 + b_3 * age ^ 3 + b_4 * age ^ 4,
+  a ~ dnorm(0, 5),
+  b_1 ~ dnorm(0, 5),
+  b_2 ~ dnorm(0, 5),
+  b_3 ~ dnorm(0, 5),
+  b_4 ~ dnorm(0, 5),
+  sigma ~ dunif(0, 25)
+)
+fit_fourth_model <- rethinking::map(fourth_model, data = d1)
+
+fifth_model <- alist(
+  height ~ dnorm(mu, sigma),
+  mu <- a + b_1 * age + b_2 * age ^ 2 + b_3 * age ^ 3 + b_4 * age ^ 4 + b_5 * age ^ 5,
+  a ~ dnorm(0, 5),
+  b_1 ~ dnorm(0, 5),
+  b_2 ~ dnorm(0, 5),
+  b_3 ~ dnorm(0, 5),
+  b_4 ~ dnorm(0, 5),
+  b_5 ~ dnorm(0, 5),
+  sigma ~ dunif(0, 25)
+)
+fit_fifth_model <- rethinking::map(fifth_model, data = d1)
+
+sixth_model <- alist(
+  height ~ dnorm(mu, sigma),
+  mu <- a + b_1 * age + b_2 * age ^ 2 + b_3 * age ^ 3 + b_4 * age ^ 4 + b_5 * age ^ 5 + b_6 * age ^ 6,
+  a ~ dnorm(0, 5),
+  b_1 ~ dnorm(0, 5),
+  b_2 ~ dnorm(0, 5),
+  b_3 ~ dnorm(0, 5),
+  b_4 ~ dnorm(0, 5),
+  b_5 ~ dnorm(0, 5),
+  b_6 ~ dnorm(0, 5),
+  sigma ~ dunif(0, 25)
+)
+fit_sixth_model <- rethinking::map(sixth_model, data = d1)
+```
+
 **6H1.** Compare the models above, using WAIC. Compare the model rankings, as well as the WAIC weights.
+
+```{r}
+rethinking::compare(fit_first_model, fit_second_model, fit_third_model, fit_fourth_model, fit_fifth_model, fit_sixth_model, func = WAIC)
+```
+
+The fourth model was found to me the "best." 
 
 **6H2.** For each model, produce a plot with model averaged mean and 97% confidence interval of the mean, superimposed on the raw data. How do predictions differ across models?
 
