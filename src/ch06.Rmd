@@ -322,10 +322,6 @@ partial_view_expectations <- partial(view_expectations,
                                      ci = 0.97)
 ```
 
-```{r}
-library(gridExtra)
-```
-
 
 ```{r}
 all_models <- list(fit_first_model, fit_second_model, fit_third_model, fit_fourth_model, fit_fifth_model, fit_sixth_model)
@@ -341,6 +337,28 @@ all_plots
 
 
 **6H3.** Now also plot the model averaged predictions, across all models. In what ways do the averaged predictions differ from the predictions of the model with the lowest WAIC value?
+
+```{r}
+ensembled_model <- rethinking::ensemble(fit_first_model, 
+                                        fit_second_model, 
+                                        fit_third_model, 
+                                        fit_fourth_model, 
+                                        fit_fifth_model, 
+                                        fit_sixth_model, data = d1)
+```
+
+```{r}
+view_expectations
+```
+
+
+```{r}
+ensembled_expectations <- get_expectation_and_ci(ensembled_model$link, 0.97)
+plot_expectations(data_points = d1, 
+                  expectations = ensembled_expectations, 
+                  x = "age",
+                  y = "height")
+```
 
 **6H4.** Compute the test-sample deviance for each model. This means calculating deviance, but using the data in d2 now. You can compute the log-likelihood of the height data with:
 
