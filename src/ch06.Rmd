@@ -142,7 +142,7 @@ wide_prior_model <- alist(
   b1 ~ dnorm(0, 10),
   b2 ~ dnorm(0, 10),
   b3 ~ dnorm(0, 10),
-  sigma ~ dunif(0, 500)
+  sigma ~ dunif(0, 100)
                )
 fit_model <- rethinking::map(wide_prior_model, data = df[1:100,])
 attr(rethinking::WAIC(fit_model), "pWAIC")
@@ -193,14 +193,18 @@ Use map to fit these. Use weakly regularizing priors for all parameters.
 Note that fitting all of these polynomials to the height-by-age relationship is not a good way to derive insight. It would be better to have a simpler approach that would allow for more insight, like perhaps a piecewise linear model. But the set of polynomial families above will serve to help you practice and understand model comparison and averaging.
 
 ```{r}
+a_start <- mean(d1$height)
+sigma_start <- sd(d1$height)
+
 first_model <- alist(
   height ~ dnorm(mu, sigma),
   mu <- a + b_1 * age,
   a ~ dnorm(0, 5),
   b_1 ~ dnorm(0, 5),
-  sigma ~ dunif(0, 25)
+  sigma ~ dunif(0, 50)
 )
-fit_first_model <- rethinking::map(first_model, data = d1)
+first_start <- list(a = a_start, sigma = sigma_start, b_1 = 0)
+fit_first_model <- rethinking::map(first_model, data = d1, start = first_start)
 
 second_model <- alist(
   height ~ dnorm(mu, sigma),
@@ -208,9 +212,10 @@ second_model <- alist(
   a ~ dnorm(0, 5),
   b_1 ~ dnorm(0, 5),
   b_2 ~ dnorm(0, 5),
-  sigma ~ dunif(0, 25)
+  sigma ~ dunif(0, 50)
 )
-fit_second_model <- rethinking::map(second_model, data = d1)
+second_start <- list(a = a_start, sigma = sigma_start, b_1 = 0, b_2 = 0)
+fit_second_model <- rethinking::map(second_model, data = d1, start = second_start)
 
 third_model <- alist(
   height ~ dnorm(mu, sigma),
@@ -219,9 +224,10 @@ third_model <- alist(
   b_1 ~ dnorm(0, 5),
   b_2 ~ dnorm(0, 5),
   b_3 ~ dnorm(0, 5),
-  sigma ~ dunif(0, 25)
+  sigma ~ dunif(0, 50)
 )
-fit_third_model <- rethinking::map(third_model, data = d1)
+third_start <- list(a = a_start, sigma = sigma_start, b_1 = 0, b_2 = 0, b_3 = 0)
+fit_third_model <- rethinking::map(third_model, data = d1, start = third_start)
 
 fourth_model <- alist(
   height ~ dnorm(mu, sigma),
@@ -231,9 +237,10 @@ fourth_model <- alist(
   b_2 ~ dnorm(0, 5),
   b_3 ~ dnorm(0, 5),
   b_4 ~ dnorm(0, 5),
-  sigma ~ dunif(0, 25)
+  sigma ~ dunif(0, 50)
 )
-fit_fourth_model <- rethinking::map(fourth_model, data = d1)
+fourth_start <- list(a = a_start, sigma = sigma_start, b_1 = 0, b_2 = 0, b_3 = 0, b_4 = 0)
+fit_fourth_model <- rethinking::map(fourth_model, data = d1, start = fourth_start)
 
 fifth_model <- alist(
   height ~ dnorm(mu, sigma),
@@ -244,9 +251,10 @@ fifth_model <- alist(
   b_3 ~ dnorm(0, 5),
   b_4 ~ dnorm(0, 5),
   b_5 ~ dnorm(0, 5),
-  sigma ~ dunif(0, 25)
+  sigma ~ dunif(0, 50)
 )
-fit_fifth_model <- rethinking::map(fifth_model, data = d1)
+fifth_start <- list(a = a_start, sigma = sigma_start, b_1 = 0, b_2 = 0, b_3 = 0, b_4 = 0, b_5 = 0)
+fit_fifth_model <- rethinking::map(fifth_model, data = d1, start = fifth_start)
 
 sixth_model <- alist(
   height ~ dnorm(mu, sigma),
@@ -258,10 +266,14 @@ sixth_model <- alist(
   b_4 ~ dnorm(0, 5),
   b_5 ~ dnorm(0, 5),
   b_6 ~ dnorm(0, 5),
-  sigma ~ dunif(0, 25)
+  sigma ~ dunif(0, 50)
 )
-fit_sixth_model <- rethinking::map(sixth_model, data = d1)
+sixth_start <- list(a = a_start, sigma = sigma_start, b_1 = 0, b_2 = 0, b_3 = 0, b_4 = 0, b_5 = 0, b_6 = 0)
+fit_sixth_model <- rethinking::map(sixth_model, data = d1, start = sixth_start)
 ```
+
+Answer Key: 
+Suggests that a and sigma start at the mean and standard deviation of height. I think this is a smart idea.
 
 **6H1.** Compare the models above, using WAIC. Compare the model rankings, as well as the WAIC weights.
 
