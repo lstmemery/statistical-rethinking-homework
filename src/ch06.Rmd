@@ -93,7 +93,7 @@ df <- as_data_frame(dataset) %>%
 model <- alist(
   target ~ dnorm(mu, sigma),
   mu <- a + b1 * V1 + b2 * V2 + b3 * V3,
-  a ~ dnorm(0, 5),
+  a ~ dnorm(0, 100),
   b1 ~ dnorm(0, 1),
   b2 ~ dnorm(0, 1),
   b3 ~ dnorm(0, 1),
@@ -139,12 +139,13 @@ wide_prior_model <- alist(
   target ~ dnorm(mu, sigma),
   mu <- a + b1 * V1 + b2 * V2 + b3 * V3,
   a ~ dnorm(0, 50),
-  b1 ~ dnorm(0, 10),
-  b2 ~ dnorm(0, 10),
-  b3 ~ dnorm(0, 10),
+  b1 ~ dnorm(0, 100),
+  b2 ~ dnorm(0, 100),
+  b3 ~ dnorm(0, 100),
   sigma ~ dunif(0, 100)
-               )
-fit_model <- rethinking::map(wide_prior_model, data = df[1:100,])
+)
+wide_prior_start <- list(a = a_start, sigma = sigma_start, b1 = 0, b2 = 0, b3 = 0)
+fit_model <- rethinking::map(wide_prior_model, data = df[1:100,], start = wide_prior_start)
 attr(rethinking::WAIC(fit_model), "pWAIC")
 ```
 
@@ -199,8 +200,8 @@ sigma_start <- sd(d1$height)
 first_model <- alist(
   height ~ dnorm(mu, sigma),
   mu <- a + b_1 * age,
-  a ~ dnorm(0, 5),
-  b_1 ~ dnorm(0, 5),
+  a ~ dnorm(0, 100),
+  b_1 ~ dnorm(0, 100),
   sigma ~ dunif(0, 50)
 )
 first_start <- list(a = a_start, sigma = sigma_start, b_1 = 0)
@@ -209,9 +210,9 @@ fit_first_model <- rethinking::map(first_model, data = d1, start = first_start)
 second_model <- alist(
   height ~ dnorm(mu, sigma),
   mu <- a + b_1 * age + b_2 * age ^ 2,
-  a ~ dnorm(0, 5),
-  b_1 ~ dnorm(0, 5),
-  b_2 ~ dnorm(0, 5),
+  a ~ dnorm(0, 100),
+  b_1 ~ dnorm(0, 100),
+  b_2 ~ dnorm(0, 100),
   sigma ~ dunif(0, 50)
 )
 second_start <- list(a = a_start, sigma = sigma_start, b_1 = 0, b_2 = 0)
@@ -220,10 +221,10 @@ fit_second_model <- rethinking::map(second_model, data = d1, start = second_star
 third_model <- alist(
   height ~ dnorm(mu, sigma),
   mu <- a + b_1 * age + b_2 * age ^ 2 + b_3 * age ^ 3,
-  a ~ dnorm(0, 5),
-  b_1 ~ dnorm(0, 5),
-  b_2 ~ dnorm(0, 5),
-  b_3 ~ dnorm(0, 5),
+  a ~ dnorm(0, 100),
+  b_1 ~ dnorm(0, 100),
+  b_2 ~ dnorm(0, 100),
+  b_3 ~ dnorm(0, 100),
   sigma ~ dunif(0, 50)
 )
 third_start <- list(a = a_start, sigma = sigma_start, b_1 = 0, b_2 = 0, b_3 = 0)
@@ -232,11 +233,11 @@ fit_third_model <- rethinking::map(third_model, data = d1, start = third_start)
 fourth_model <- alist(
   height ~ dnorm(mu, sigma),
   mu <- a + b_1 * age + b_2 * age ^ 2 + b_3 * age ^ 3 + b_4 * age ^ 4,
-  a ~ dnorm(0, 5),
-  b_1 ~ dnorm(0, 5),
-  b_2 ~ dnorm(0, 5),
-  b_3 ~ dnorm(0, 5),
-  b_4 ~ dnorm(0, 5),
+  a ~ dnorm(0, 100),
+  b_1 ~ dnorm(0, 100),
+  b_2 ~ dnorm(0, 100),
+  b_3 ~ dnorm(0, 100),
+  b_4 ~ dnorm(0, 100),
   sigma ~ dunif(0, 50)
 )
 fourth_start <- list(a = a_start, sigma = sigma_start, b_1 = 0, b_2 = 0, b_3 = 0, b_4 = 0)
@@ -245,12 +246,12 @@ fit_fourth_model <- rethinking::map(fourth_model, data = d1, start = fourth_star
 fifth_model <- alist(
   height ~ dnorm(mu, sigma),
   mu <- a + b_1 * age + b_2 * age ^ 2 + b_3 * age ^ 3 + b_4 * age ^ 4 + b_5 * age ^ 5,
-  a ~ dnorm(0, 5),
-  b_1 ~ dnorm(0, 5),
-  b_2 ~ dnorm(0, 5),
-  b_3 ~ dnorm(0, 5),
-  b_4 ~ dnorm(0, 5),
-  b_5 ~ dnorm(0, 5),
+  a ~ dnorm(0, 100),
+  b_1 ~ dnorm(0, 100),
+  b_2 ~ dnorm(0, 100),
+  b_3 ~ dnorm(0, 100),
+  b_4 ~ dnorm(0, 100),
+  b_5 ~ dnorm(0, 100),
   sigma ~ dunif(0, 50)
 )
 fifth_start <- list(a = a_start, sigma = sigma_start, b_1 = 0, b_2 = 0, b_3 = 0, b_4 = 0, b_5 = 0)
@@ -259,13 +260,13 @@ fit_fifth_model <- rethinking::map(fifth_model, data = d1, start = fifth_start)
 sixth_model <- alist(
   height ~ dnorm(mu, sigma),
   mu <- a + b_1 * age + b_2 * age ^ 2 + b_3 * age ^ 3 + b_4 * age ^ 4 + b_5 * age ^ 5 + b_6 * age ^ 6,
-  a ~ dnorm(0, 5),
-  b_1 ~ dnorm(0, 5),
-  b_2 ~ dnorm(0, 5),
-  b_3 ~ dnorm(0, 5),
-  b_4 ~ dnorm(0, 5),
-  b_5 ~ dnorm(0, 5),
-  b_6 ~ dnorm(0, 5),
+  a ~ dnorm(0, 100),
+  b_1 ~ dnorm(0, 100),
+  b_2 ~ dnorm(0, 100),
+  b_3 ~ dnorm(0, 100),
+  b_4 ~ dnorm(0, 100),
+  b_5 ~ dnorm(0, 100),
+  b_6 ~ dnorm(0, 100),
   sigma ~ dunif(0, 50)
 )
 sixth_start <- list(a = a_start, sigma = sigma_start, b_1 = 0, b_2 = 0, b_3 = 0, b_4 = 0, b_5 = 0, b_6 = 0)
@@ -422,4 +423,19 @@ and assume flat (or nearly flat) priors on α and σ. This model contains more s
 
 First, fit this model to the data in d1 . Report the MAP estimates and plot the implied predictions. Then compute the out-of-sample deviance using the data in d2 , using MAP estimates from the model fit to d1 only. How does this model, using regularizing priors, compare to the best WAIC model from earlier? How do you interpret this result?
 
-This model was the 
+```{r}
+regular_model <- alist(
+  height ~ dnorm(mu, sigma),
+  mu <- a + b_1 * age + b_2 * age ^ 2 + b_3 * age ^ 3 + b_4 * age ^ 4 + b_5 * age ^ 5 + b_6 * age ^ 6,
+  a ~ dnorm(0, 100),
+  b_1 ~ dnorm(0, 5),
+  b_2 ~ dnorm(0, 5),
+  b_3 ~ dnorm(0, 5),
+  b_4 ~ dnorm(0, 5),
+  b_5 ~ dnorm(0, 5),
+  b_6 ~ dnorm(0, 5),
+  sigma ~ dunif(0, 50)
+)
+fit_regular_model <- rethinking::map(regular_model, data = d1, start = sixth_start)
+```
+
