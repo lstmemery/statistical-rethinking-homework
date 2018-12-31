@@ -442,16 +442,18 @@ plot_expectations(data_points = d1,
 ```
 
 ```{r}
-WAIC(fit_regular_model)
+WAIC(fit_regular_model)[[1]] - min(waic_comparison@output$WAIC)
 ```
 
 ```{r}
-regular_coef <- rethinking::coef(fit_regular_model)
-regular_coef
+regular_coefs <- rethinking::coef(fit_regular_model)
+regular_coefs
 ```
 
 
 ```{r}
 regular_test_deviance <- -2 * sum(dnorm(d2$height, mean=regular_coefs[["a"]] + regular_coefs[["b_1"]] * d2$age + regular_coefs[["b_2"]] * d2$age^2 + regular_coefs[["b_3"]] * d2$age^3 + regular_coefs[["b_4"]] * d2$age^4 + regular_coefs[["b_5"]] * d2$age^5 + regular_coefs[["b_6"]] * d2$age^6, sd = regular_coefs[["sigma"]], log = TRUE))
+regular_test_deviance - min(all_test_deviances)
 ```
 
+The priors have a worse WAIC but a better out of sample deviance. This is because the regularizing priors are making the fit to d1 less strong (preventing overfitting).
