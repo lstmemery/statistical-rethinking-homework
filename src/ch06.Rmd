@@ -278,7 +278,8 @@ Suggests that a and sigma start at the mean and standard deviation of height. I 
 **6H1.** Compare the models above, using WAIC. Compare the model rankings, as well as the WAIC weights.
 
 ```{r}
-rethinking::compare(fit_first_model, fit_second_model, fit_third_model, fit_fourth_model, fit_fifth_model, fit_sixth_model, func = WAIC)
+waic_comparison <- rethinking::compare(fit_first_model, fit_second_model, fit_third_model, fit_fourth_model, fit_fifth_model, fit_sixth_model, func = WAIC)
+waic_comparison
 ```
 
 The fourth model was found to me the "best." 
@@ -390,17 +391,23 @@ fourth_test_deviance <- -2 * sum(dnorm(d2$height, mean=fourth_coefs[["a"]] + fou
 fifth_test_deviance <- -2 * sum(dnorm(d2$height, mean=fifth_coefs[["a"]] + fifth_coefs[["b_1"]] * d2$age + fifth_coefs[["b_2"]] * d2$age^2 + fifth_coefs[["b_3"]] * d2$age^3 + fifth_coefs[["b_4"]] * d2$age^4 + fifth_coefs[["b_5"]] * d2$age^5, sd = first_coefs[["sigma"]], log = TRUE))
 sixth_test_deviance <- -2 * sum(dnorm(d2$height, mean=sixth_coefs[["a"]] + sixth_coefs[["b_1"]] * d2$age + sixth_coefs[["b_2"]] * d2$age^2 + sixth_coefs[["b_3"]] * d2$age^3 + sixth_coefs[["b_4"]] * d2$age^4 + sixth_coefs[["b_5"]] * d2$age^5 + sixth_coefs[["b_6"]] * d2$age^6, sd = first_coefs[["sigma"]], log = TRUE))
 
-all_test_deviances <- c(first_test_deviance, second_test_deviance, third_test_deviance, fourth_test_deviance, fifth_test_deviance, sixth_test_deviance)
+all_test_deviances <- c(fourth_test_deviance, fifth_test_deviance, sixth_test_deviance, third_test_deviance, second_test_deviance, first_test_deviance)
 all_test_deviances
 
 ```
-
 
 where mu is a vector of predicted means (based upon age values and MAP parameters) and sigma is the MAP standard deviation.
 
 **6H5.** Compare the deviances from **6H4** to the WAIC values. It might be easier to compare if you subtract the smallest value in each list from the others. For example, subtract the minimum WAIC from all of the WAIC values so that the best WAIC is normalized to zero. Which model makes the best out-of-sample predictions in this case? Does WAIC do a good job of estimating the test deviance?
 
+```{r}
+centered_waic <- waic_comparison@output$WAIC - min(waic_comparison@output$WAIC)
+centered_test_deviance <- all_test_deviances - min(all_test_deviances)
+data_frame(waic = centered_waic,
+           test_deviance = centered_test_deviance)
+```
 
+WAIC does well approximating the Test Deviance.
 
 $$h _ { i } \sim \operatorname { Normal } \left( \mu _ { i } , \sigma \right)$$
 $$\mu _ { i } = \alpha + \beta _ { 1 } x _ { i } + \beta _ { 2 } x _ { i } ^ { 2 } + \beta _ { 3 } x _ { i } ^ { 3 } + \beta _ { 4 } x _ { i } ^ { 4 } + \beta _ { 5 } x _ { i } ^ { 5 } + \beta _ { 6 } x _ { i } ^ { 6 }$$
@@ -414,3 +421,5 @@ $$\beta _ { 6 } \sim \operatorname { Normal } ( 0,5 )$$
 and assume flat (or nearly flat) priors on α and σ. This model contains more strongly regularizing priors on the coefficients.
 
 First, fit this model to the data in d1 . Report the MAP estimates and plot the implied predictions. Then compute the out-of-sample deviance using the data in d2 , using MAP estimates from the model fit to d1 only. How does this model, using regularizing priors, compare to the best WAIC model from earlier? How do you interpret this result?
+
+This model was the 
