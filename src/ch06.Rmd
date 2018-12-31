@@ -135,6 +135,9 @@ attr(rethinking::WAIC(fit_model), "pWAIC")
 ```
 
 ```{r}
+a_start <- mean(d1$height)
+sigma_start <- sd(d1$height)
+
 wide_prior_model <- alist(
   target ~ dnorm(mu, sigma),
   mu <- a + b1 * V1 + b2 * V2 + b3 * V3,
@@ -194,9 +197,6 @@ Use map to fit these. Use weakly regularizing priors for all parameters.
 Note that fitting all of these polynomials to the height-by-age relationship is not a good way to derive insight. It would be better to have a simpler approach that would allow for more insight, like perhaps a piecewise linear model. But the set of polynomial families above will serve to help you practice and understand model comparison and averaging.
 
 ```{r}
-a_start <- mean(d1$height)
-sigma_start <- sd(d1$height)
-
 first_model <- alist(
   height ~ dnorm(mu, sigma),
   mu <- a + b_1 * age,
@@ -378,19 +378,12 @@ sixth_coefs <- all_coefs[[6]]
 ```
 
 ```{r}
-second_coefs
-```
-
-
-
-
-```{r}
 first_test_deviance <- -2 * sum(dnorm(d2$height, mean=first_coefs[["a"]] + first_coefs[["b_1"]] * d2$age, sd = first_coefs[["sigma"]], log = TRUE))
-second_test_deviance <- -2 * sum(dnorm(d2$height, mean=second_coefs[["a"]] + second_coefs[["b_1"]] * d2$age + second_coefs[["b_2"]] * d2$age^2, sd = first_coefs[["sigma"]], log = TRUE))
-third_test_deviance <- -2 * sum(dnorm(d2$height, mean=third_coefs[["a"]] + third_coefs[["b_1"]] * d2$age + third_coefs[["b_2"]] * d2$age^2 + third_coefs[["b_3"]] * d2$age^3, sd = first_coefs[["sigma"]], log = TRUE))
-fourth_test_deviance <- -2 * sum(dnorm(d2$height, mean=fourth_coefs[["a"]] + fourth_coefs[["b_1"]] * d2$age + fourth_coefs[["b_2"]] * d2$age^2 + fourth_coefs[["b_3"]] * d2$age^3 + fourth_coefs[["b_4"]] * d2$age^4, sd = first_coefs[["sigma"]], log = TRUE))
-fifth_test_deviance <- -2 * sum(dnorm(d2$height, mean=fifth_coefs[["a"]] + fifth_coefs[["b_1"]] * d2$age + fifth_coefs[["b_2"]] * d2$age^2 + fifth_coefs[["b_3"]] * d2$age^3 + fifth_coefs[["b_4"]] * d2$age^4 + fifth_coefs[["b_5"]] * d2$age^5, sd = first_coefs[["sigma"]], log = TRUE))
-sixth_test_deviance <- -2 * sum(dnorm(d2$height, mean=sixth_coefs[["a"]] + sixth_coefs[["b_1"]] * d2$age + sixth_coefs[["b_2"]] * d2$age^2 + sixth_coefs[["b_3"]] * d2$age^3 + sixth_coefs[["b_4"]] * d2$age^4 + sixth_coefs[["b_5"]] * d2$age^5 + sixth_coefs[["b_6"]] * d2$age^6, sd = first_coefs[["sigma"]], log = TRUE))
+second_test_deviance <- -2 * sum(dnorm(d2$height, mean=second_coefs[["a"]] + second_coefs[["b_1"]] * d2$age + second_coefs[["b_2"]] * d2$age^2, sd = second_coefs[["sigma"]], log = TRUE))
+third_test_deviance <- -2 * sum(dnorm(d2$height, mean=third_coefs[["a"]] + third_coefs[["b_1"]] * d2$age + third_coefs[["b_2"]] * d2$age^2 + third_coefs[["b_3"]] * d2$age^3, sd = third_coefs[["sigma"]], log = TRUE))
+fourth_test_deviance <- -2 * sum(dnorm(d2$height, mean=fourth_coefs[["a"]] + fourth_coefs[["b_1"]] * d2$age + fourth_coefs[["b_2"]] * d2$age^2 + fourth_coefs[["b_3"]] * d2$age^3 + fourth_coefs[["b_4"]] * d2$age^4, sd = fourth_coefs[["sigma"]], log = TRUE))
+fifth_test_deviance <- -2 * sum(dnorm(d2$height, mean=fifth_coefs[["a"]] + fifth_coefs[["b_1"]] * d2$age + fifth_coefs[["b_2"]] * d2$age^2 + fifth_coefs[["b_3"]] * d2$age^3 + fifth_coefs[["b_4"]] * d2$age^4 + fifth_coefs[["b_5"]] * d2$age^5, sd = fifth_coefs[["sigma"]], log = TRUE))
+sixth_test_deviance <- -2 * sum(dnorm(d2$height, mean=sixth_coefs[["a"]] + sixth_coefs[["b_1"]] * d2$age + sixth_coefs[["b_2"]] * d2$age^2 + sixth_coefs[["b_3"]] * d2$age^3 + sixth_coefs[["b_4"]] * d2$age^4 + sixth_coefs[["b_5"]] * d2$age^5 + sixth_coefs[["b_6"]] * d2$age^6, sd = sixth_coefs[["sigma"]], log = TRUE))
 
 all_test_deviances <- c(fourth_test_deviance, fifth_test_deviance, sixth_test_deviance, third_test_deviance, second_test_deviance, first_test_deviance)
 all_test_deviances
@@ -437,5 +430,28 @@ regular_model <- alist(
   sigma ~ dunif(0, 50)
 )
 fit_regular_model <- rethinking::map(regular_model, data = d1, start = sixth_start)
+```
+
+```{r}
+regular_predictions <- rethinking::link(fit_regular_model, data = d1)
+regular_expectations <- get_expectation_and_ci(regular_predictions, credible_interval = 0.97)
+plot_expectations(data_points = d1,
+                  expectations = regular_expectations,
+                  x = "age",
+                  y = "height")
+```
+
+```{r}
+WAIC(fit_regular_model)
+```
+
+```{r}
+regular_coef <- rethinking::coef(fit_regular_model)
+regular_coef
+```
+
+
+```{r}
+regular_test_deviance <- -2 * sum(dnorm(d2$height, mean=regular_coefs[["a"]] + regular_coefs[["b_1"]] * d2$age + regular_coefs[["b_2"]] * d2$age^2 + regular_coefs[["b_3"]] * d2$age^3 + regular_coefs[["b_4"]] * d2$age^4 + regular_coefs[["b_5"]] * d2$age^5 + regular_coefs[["b_6"]] * d2$age^6, sd = regular_coefs[["sigma"]], log = TRUE))
 ```
 
